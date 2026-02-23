@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  website:
+    build:
+      context: .
+      dockerfile: ./services/website/Dockerfile
+    container_name: trip_website
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./services/website/logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - network
+
+  accounts:
+    build:
+      context: .
+      dockerfile: ./services/accounts/Dockerfile
+    container_name: trip_accounts
+    environment:
+      - DB_HOST=accounts_db
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASS=${POSTGRES_PASSWORD}
+    volumes:
+      - ./services/accounts/logs:/app/logs
+    depends_on:
+      - accounts_db
+    restart: unless-stopped
+    networks:
+      - network
+
+  accounts_db:
+    image: postgres:15-alpine
+    container_name: trip_accounts_db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - accounts_db_data:/var/lib/postgresql/data
+      - ./services/accounts/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - network
+    restart: unless-stopped
+
+  db_backup:
+    image: prodrigestivill/postgres-backup-local
+    container_name: trip_db_backup
+    restart: always
+    environment:
+      - POSTGRES_HOST=accounts_db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=6
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      - accounts_db
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  accounts_db_data:
