@@ -71,7 +71,7 @@ jobs:
             cd ~/Trip
             
             echo "🛑 Stopping running containers..."
-            if docker-compose ps --quiet | grep -q .; then
+            if docker compose ps --quiet | grep -q .; then
                echo "ℹ️ Using rolling update strategy..."
             else
                echo "ℹ️ No containers running"
@@ -109,7 +109,7 @@ jobs:
             chmod 600 .env
 
             echo "🔨 Building Docker images..."
-            docker-compose build
+            docker compose build
             
             if [ $? -eq 0 ]; then
               echo "✅ Build completed successfully!"
@@ -131,7 +131,7 @@ jobs:
             cd ~/Trip
             
             echo "🚀 Starting containers..."
-            docker-compose up -d
+            docker compose up -d
             
             echo ""
             echo "⏳ Waiting for containers to start..."
@@ -157,14 +157,14 @@ jobs:
             cd ~/Trip
             
             echo "📊 Checking container status..."
-            docker-compose ps
+            docker compose ps
             
             echo ""
             echo "🔍 Checking if all containers are running..."
             
             # Проверяем, что все контейнеры запущены
-            RUNNING=$(docker-compose ps --filter "status=running" --quiet | wc -l)
-            TOTAL=$(docker-compose ps --quiet | wc -l)
+            RUNNING=$(docker compose ps --filter "status=running" --quiet | wc -l)
+            TOTAL=$(docker compose ps --quiet | wc -l)
             
             echo "Running: $RUNNING / $TOTAL"
             
@@ -174,13 +174,13 @@ jobs:
               echo "❌ Some containers are not running!"
               echo ""
               echo "📋 Container logs:"
-              docker-compose logs --tail=50
+              docker compose logs --tail=50
               exit 1
             fi
             
             echo ""
             echo "📋 Recent logs:"
-            docker-compose logs --tail=20
+            docker compose logs --tail=20
 
       - name: 🧹 Cleanup old images
         uses: appleboy/ssh-action@master
@@ -215,5 +215,5 @@ jobs:
             git log -1 --pretty=format:"   %h - %s (%an)"
             echo ""
             echo "🐳 Containers:"
-            docker-compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+            docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
             echo "=================================="
