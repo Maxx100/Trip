@@ -2,11 +2,15 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY services/accounts .
-COPY core ./core
+
+COPY services/accounts/requirements.txt ./requirements.txt
+COPY core/logger/requirements.txt ./core/logger/requirements.txt
 
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir -r core/logger/requirements.txt
+
+COPY services/accounts .
+COPY core ./core
 
 RUN mkdir -p /app/logs
 
