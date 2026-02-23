@@ -1,15 +1,52 @@
 
-from fastapi import FastAPI, HTTPException, status
+from fastapi import FastAPI, HTTPException, status, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
+from fastapi.openapi.utils import get_openapi
 from pydantic import BaseModel, EmailStr
 import hashlib
 import logging
+import secrets
+import os
 from database import create_user
 from core.logger.logger_setup import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Accounts Service")
+# Disable default docs
+app = FastAPI(title="Accounts Service", docs_url=None, redoc_url=None, openapi_url=None)
+
+security = HTTPBasic()
+
+def get_current_username(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = os.getenv("DOCS_USERNAME", "admin")
+    correct_password = os.getenv("DOCS_PASSWORD", "secret")
+    
+    is_correct_username = secrets.compare_digest(credentials.username, correct_username)
+    is_correct_password = secrets.compare_digest(credentials.password, correct_password)
+    
+    if not (is_correct_username and is_correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
+
+@app.get("/docs", include_in_schema=False)
+async def get_documentation(username: str = Depends(get_current_username)):
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="Docs")
+
+@app.get("/redoc", include_in_schema=False)
+async def get_redoc_documentation(username: str = Depends(get_current_username)):
+    return get_redoc_html(openapi_url="/openapi.json", title="ReDoc")
+
+
+@app.get("/openapi.json", include_in_schema=False)
+async def get_open_api_endpoint(username: str = Depends(get_current_username)):
+    return get_openapi(title="FastAPI", version="0.1.0", routes=app.routes)
+
 
 class UserCreate(BaseModel):
     email: EmailStr
