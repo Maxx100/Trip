@@ -1,51 +1,21 @@
-from http.server import BaseHTTPRequestHandler
-import socketserver
-import threading
-import ssl
-from core.logger.logger_setup import setup_logging
+from fastapi import FastAPI, Response
 import logging
+import threading
+import requests
+import time
+from core.logger.logger_setup import setup_logging
 
 setup_logging()
 logger = logging.getLogger(__name__)
 
-HTTP_PORT = 80
-HTTPS_PORT = 443
-DOMAIN = "trip-kzn.ru"
+app = FastAPI(docs_url=None, redoc_url=None)
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-context.load_cert_chain(certfile='fullchain.pem', keyfile='certificate.key')
-
-
-class HTTPSHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/plain; charset=utf-8')
-        self.send_header('Content-Length', len(b"s4vaki"))
-        self.end_headers()
-        self.wfile.write(b"s4vaki")
-
-    def do_POST(self):
-        self.do_GET()
-
-class HTTPRedirect(HTTPSHandler):
-    def do_GET(self):
-        self.send_response(301)
-        self.send_header('Location', f'https://trip-kzn.ru:{HTTPS_PORT}{self.path}')
-        self.end_headers()
-
-def run_http():
-    httpd = socketserver.TCPServer(("", HTTP_PORT), HTTPRedirect)
-    logger.info("HTTP сервер запущен")
-    httpd.serve_forever()
-
-
+@app.get("/")
+def read_root():
+    return Response(content="s4vaki", media_type="text/plain; charset=utf-8")
 
 def simulate_user_creation():
-    import requests
-    import time
-    
-    # Wait for accounts service to start
-    time.sleep(5) 
+    time.sleep(10) 
     
     try:
         response = requests.post(
@@ -60,13 +30,16 @@ def simulate_user_creation():
         logger.error(f"Failed to call accounts service: {e}")
 
 if __name__ == '__main__':
-    # Run user creation test in background
     test_thread = threading.Thread(target=simulate_user_creation, daemon=True)
     test_thread.start()
 
-    http_thread = threading.Thread(target=run_http, daemon=True)
-    http_thread.start()
-    with socketserver.TCPServer(("", HTTPS_PORT), HTTPSHandler) as httpd:
-        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
-        logger.info(f"Сайт запущен на https://trip-kzn.ru:{HTTPS_PORT}")
-        httpd.serve_forever()
+    logger.info("Starting website service with Uvicorn...")
+    
+    import uvicorn
+    uvicorn.run(
+        app, 
+        host="0.0.0.0", 
+        port=443, 
+        ssl_keyfile="/app/certificate.key", 
+        ssl_certfile="/app/fullchain.pem"
+    )

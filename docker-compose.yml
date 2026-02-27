@@ -8,6 +8,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
+      - ./fullchain.pem:/app/fullchain.pem
+      - ./certificate.key:/app/certificate.key
       - ./services/website/logs:/app/logs
     restart: unless-stopped
     networks:
