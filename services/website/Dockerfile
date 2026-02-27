@@ -13,7 +13,5 @@ COPY services/website .
 
 RUN mkdir -p /app/logs
 
-# open port
-EXPOSE 80
-
-CMD ["python", "main.py"]
+EXPOSE 443 80
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "443", "--ssl-keyfile", "/app/certificate.key", "--ssl-certfile", "/app/fullchain.pem"]

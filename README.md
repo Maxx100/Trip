@@ -1,5 +1,6 @@
 # Trip
-[Website](https://trip-kzn.ru/)
+[Website](https://trip-kzn.ru/)<br>
+[Swagger](http://trip-kzn.ru:5000/docs)<br>
 [TG bot (planned)]()
 
 # Миниправила
