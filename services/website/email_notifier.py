@@ -11,12 +11,12 @@ class Notify:
     def __init__(self):
         self.smtp_host = os.getenv("SMTP_HOST", "smtp.yandex.ru")
         self.smtp_port = int(os.getenv("SMTP_PORT", "465"))
-        self.smtp_username = os.getenv("SMTP_USERNAME", "trip-kzn@yandex.ru")
+        self.smtp_username = os.getenv("SMTP_USERNAME", "s4vaki-notification@yandex.com")
         self.smtp_password = os.getenv("SMTP_PASSWORD", "")
         self.smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
         self.smtp_use_starttls = os.getenv("SMTP_USE_STARTTLS", "false").lower() == "true"
-        self.from_email = os.getenv("SMTP_FROM_EMAIL", self.smtp_username)
-        self.to_email = os.getenv("LEADS_TO_EMAIL", self.smtp_username)
+        self.from_email = os.getenv("SMTP_FROM_EMAIL", "s4vaki-notification@yandex.com")
+        self.to_email = os.getenv("LEADS_TO_EMAIL", "trip-kzn@mail.ru")
 
     def is_configured(self) -> bool:
         return all([
