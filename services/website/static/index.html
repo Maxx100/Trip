@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TriP — Турагентство для всех</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="cursor-glow" aria-hidden="true"></div>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="#">
+          <img src="assets/brand/logo.png" alt="TriP" />
+        </a>
+        <nav class="nav-links">
+          <a href="#">Туры</a>
+          <a href="#">Направления</a>
+          <a href="#">О нас</a>
+          <a href="#">Отзывы</a>
+          <a href="#">Контакты</a>
+        </nav>
+        <a class="btn btn-outline" href="#">Подобрать тур</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero parallax-section" id="hero">
+        <div class="hero-bg-layer layer-1" data-speed="0.25"></div>
+        <div class="hero-bg-layer layer-2" data-speed="0.45"></div>
+        <div class="hero-bg-layer layer-3" data-speed="0.7"></div>
+
+        <div class="container hero-content">
+          <p class="eyebrow">Туры для каждого</p>
+          <p class="hero-kicker">TRIP MODE: ON</p>
+          <h1>
+            Открой мир ярче —
+            <span>с путешествиями, которые подходят именно вам</span>
+          </h1>
+          <p class="hero-subtitle">
+            Семейный отдых, романтические поездки, туры с друзьями и solo-путешествия.
+            Поможем подобрать маршрут по датам, составу семьи и бюджету.
+          </p>
+          <div class="hero-actions">
+            <a href="#trip-form" class="btn btn-primary">Хочу в путешествие</a>
+            <a href="https://tourvisor.ru/search" target="_blank" rel="noopener noreferrer" class="btn btn-glass">Поиск через Tourvisor</a>
+          </div>
+
+          <div class="stats-grid">
+            <article>
+              <strong>2 сотрудника/команда</strong>
+              <span>Работаем как единая команда</span>
+            </article>
+            <article>
+              <strong>С 2018 года в туризме</strong>
+              <span>Опыт и экспертность в подборе туров</span>
+            </article>
+            <article>
+              <strong>Тысячи довольных клиентов</strong>
+              <span>Нам доверяют семейный и индивидуальный отдых</span>
+            </article>
+          </div>
+
+          <div class="bonus-offer">
+            <strong>И только у нас! Бонус для наших клиентов!</strong>
+            <span>При бронировании тура от 75 000 ₽/чел. — бесплатный трансфер в аэропорт Казани!</span>
+          </div>
+
+          <div class="hero-orbit" aria-hidden="true">
+            <div class="orbit-ring"></div>
+            <div class="orbit-core">✈</div>
+          </div>
+
+          <div class="floating-chip chip-1">🔥 Горящие туры</div>
+          <div class="floating-chip chip-2">✈️ Вылеты каждую неделю</div>
+          <div class="floating-chip chip-3">👨‍👩‍👧‍👦 Отдых для всех</div>
+        </div>
+      </section>
+
+      <section class="motion-strip" aria-label="Преимущества">
+        <div class="motion-track">
+          <div class="motion-group">
+            <span>Пакетные туры</span>
+            <span>Морские и речные круизы</span>
+            <span>Экскурсионные туры</span>
+            <span>Автобусные туры</span>
+            <span>Школьные туры</span>
+            <span>Отели</span>
+            <span>Авиабилеты</span>
+            <span>Страховка</span>
+          </div>
+          <div class="motion-group" aria-hidden="true">
+            <span>Пакетные туры</span>
+            <span>Морские и речные круизы</span>
+            <span>Экскурсионные туры</span>
+            <span>Автобусные туры</span>
+            <span>Школьные туры</span>
+            <span>Отели</span>
+            <span>Авиабилеты</span>
+            <span>Страховка</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section reveal-item" id="tourvisor-search">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Поиск туров</p>
+            <h2>Подберите вариант через Tourvisor</h2>
+          </div>
+          <div class="tv-search-form tv-moduleid-9976347" id="tvModuleContainer"></div>
+        </div>
+      </section>
+
+      <section class="section destinations reveal-item">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Топ-направления</p>
+            <h2>Куда отправимся в этом сезоне</h2>
+          </div>
+
+          <div class="slider" data-slider="destinations" data-autoplay="true" data-interval="4200">
+            <button class="slider-btn prev" aria-label="Предыдущий слайд">‹</button>
+            <div class="slider-window">
+              <div class="slider-track">
+                <article class="card destination-card active">
+                  <img src="assets/images/site/dest-1.jpg" data-fallback="assets/images/site/dest-2.jpg" alt="Направление 1" />
+                  <div class="card-info">
+                    <h3>Санторини, Греция</h3>
+                    <p>Белоснежные улочки, вулканические пляжи и закаты уровня postcard.</p>
+                  </div>
+                </article>
+                <article class="card destination-card">
+                  <img src="assets/images/site/dest-2.jpg" data-fallback="assets/images/site/dest-3.jpg" alt="Направление 2" />
+                  <div class="card-info">
+                    <h3>Бали, Индонезия</h3>
+                    <p>Тропическая эстетика, виллы в джунглях и перезагрузка в стиле zen.</p>
+                  </div>
+                </article>
+                <article class="card destination-card">
+                  <img src="assets/images/site/dest-3.jpg" data-fallback="assets/images/site/dest-4.jpg" alt="Направление 3" />
+                  <div class="card-info">
+                    <h3>Мальдивы</h3>
+                    <p>Кристально чистая вода, уединённые резорты и идеальный отдых deluxe.</p>
+                  </div>
+                </article>
+                <article class="card destination-card">
+                  <img src="assets/images/site/dest-4.jpg" data-fallback="assets/images/site/dest-1.jpg" alt="Направление 4" />
+                  <div class="card-info">
+                    <h3>Дубай, ОАЭ</h3>
+                    <p>Футуризм, люкс-шопинг и гастрономия мирового уровня.</p>
+                  </div>
+                </article>
+              </div>
+            </div>
+            <button class="slider-btn next" aria-label="Следующий слайд">›</button>
+            <div class="slider-dots"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section parallax-banner reveal-item" id="banner">
+        <div class="banner-layer" data-speed="0.3"></div>
+        <div class="container">
+          <h2>Путешествие начинается с одного правильного клика</h2>
+          <p>
+            Мы превращаем стандартный отпуск в историю, которую хочется рассказывать снова и снова.
+          </p>
+          <a href="#" class="btn btn-primary">Начать планирование</a>
+        </div>
+      </section>
+
+      <section class="section experience-grid reveal-item">
+        <div class="container">
+          <div class="section-head">
+            <p class="eyebrow">Формат нового поколения</p>
+            <h2>Это не «просто тур» — это впечатление в режиме high-intensity</h2>
+          </div>
+          <div class="experience-cards">
+            <article class="xp-card" data-tilt>
+              <h3>01 / БЫСТРЫЙ СТАРТ</h3>
+              <p>Подбираем маршрут, отели, активности и перелёты под ваш ритм.</p>
+            </article>
+            <article class="xp-card" data-tilt>
+              <h3>02 / WOW-ПРОДУМАННОСТЬ</h3>
+              <p>Сценарий поездки собирается как кино: эмоции нарастают день за днём.</p>
+            </article>
+            <article class="xp-card" data-tilt>
+              <h3>03 / ПОЛНЫЙ КОНТРОЛЬ</h3>
+              <p>Консьерж-поддержка 24/7 и живые апдейты в чате на протяжении всего тура.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta reveal-item" id="trip-form">
+        <div class="container cta-box form-box">
+          <h2>Оставьте заявку на подбор тура</h2>
+          <p>Заполните форму — мы свяжемся с вами и подберём лучший вариант под ваши запросы.</p>
+
+          <form class="trip-form" action="#" method="post">
+            <label>
+              <span>Имя (как обращаться)</span>
+              <input type="text" name="name" placeholder="Например, Анна" required />
+            </label>
+            <label>
+              <span>Номер телефона</span>
+              <input type="tel" name="phone" placeholder="+7 (999) 123-45-67" required />
+            </label>
+            <label>
+              <span>Почта</span>
+              <input type="email" name="email" placeholder="you@example.com" required />
+            </label>
+            <label class="full">
+              <span>Пожелания по туру (даты, страна, состав семьи, примерный бюджет)</span>
+              <textarea name="wishes" rows="5" placeholder="Например: июль, Турция, 2 взрослых + 1 ребёнок, бюджет до 250 000 ₽"></textarea>
+            </label>
+            <button class="btn btn-primary" type="submit">Отправить заявку</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="section contacts-section reveal-item" id="contacts">
+        <div class="container contacts-box">
+          <div class="contacts-head">
+            <p class="eyebrow">Контакты</p>
+            <h2>Свяжитесь с TriP удобным способом</h2>
+          </div>
+
+          <div class="contacts-grid">
+            <article class="contact-card contact-main">
+              <h3>Основные контакты</h3>
+              <div class="contact-main-grid">
+                <div class="contact-mail-col">
+                  <span>Почта</span>
+                  <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a>
+                </div>
+                <div class="contact-phones-col">
+                  <div class="phone-item">
+                    <span>Телефон Татьяны</span>
+                    <a href="tel:+79520423843">+7 952 042-38-43</a>
+                  </div>
+                  <div class="phone-item">
+                    <span>Телефон Ильдара</span>
+                    <a href="tel:+79503203003">+7 950 320-30-03</a>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="contact-card contact-messengers">
+              <h3>Группы</h3>
+              <div class="social-buttons">
+                <a class="social-btn is-max" href="https://max.ru/join/RaojNQfLXSa0rBVRJH8SKXmDjZ1iiKYPlExhWTyODDY" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
+                  <span>Max</span>
+                </a>
+                <a class="social-btn is-telegram" href="https://t.me/trip_kzn" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/telegram.svg" alt="Telegram" />
+                  <span>Telegram</span>
+                </a>
+                <a class="social-btn is-whatsapp" href="https://chat.whatsapp.com/KMzXOHxLu4t6FWKant6Tfc?mode=gi_t" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/whatsapp.svg" alt="WhatsApp" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </article>
+
+            <article class="contact-card contact-messengers">
+              <h3>Личные сообщения</h3>
+              <div class="social-buttons">
+                <a class="social-btn is-max" href="https://max.ru/u/f9LHodD0cOItNyagcYOhKrzZhhgJZolK5bDR447FSqGWYM7ax5pTA-VrBxM" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
+                  <span>Max</span>
+                </a>
+                <a class="social-btn is-telegram" href="https://t.me/Tatiana_trip_kzn" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/telegram.svg" alt="Telegram" />
+                  <span>Telegram</span>
+                </a>
+                <a class="social-btn is-whatsapp" href="https://wa.me/79520423843" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/whatsapp.svg" alt="WhatsApp" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </article>
+
+            <article class="contact-card requisites">
+              <h3>Гос. реквизиты</h3>
+              <div class="req-items">
+                <p><span>ИНН:</span> 166109077356</p>
+                <p><span>Номер в реестре РТА:</span> 0052427</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <a class="brand" href="#">
+          <img src="assets/brand/logo.png" alt="TriP" />
+        </a>
+      </div>
+    </footer>
+
+    <script defer src="https://tourvisor.ru/module/init.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
