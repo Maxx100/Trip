@@ -104,6 +104,7 @@ jobs:
             printf "POSTGRES_PASSWORD=%s\n" "${{ secrets.POSTGRES_PASSWORD }}" >> .env
             printf "POSTGRES_DB=%s\n" "${{ secrets.POSTGRES_DB }}" >> .env
             printf "DOCS_PASSWORD=%s\n" "${{ secrets.DOCS_PASSWORD }}" >> .env
+            printf "SMTP_PASSWORD=%s\n" "${{ secrets.SMTP_PASSWORD }}" >> .env
             
             # Убедимся, что права доступа правильные
             chmod 600 .env
