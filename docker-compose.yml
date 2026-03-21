@@ -7,12 +7,12 @@ services:
     environment:
       - SMTP_HOST=smtp.yandex.ru
       - SMTP_PORT=465
-      - SMTP_USERNAME=trip-kzn@yandex.ru
+      - SMTP_USERNAME=s4vaki-notification@yandex.com
       - SMTP_PASSWORD=${SMTP_PASSWORD}
       - SMTP_USE_TLS=true
       - SMTP_USE_STARTTLS=false
-      - SMTP_FROM_EMAIL=trip-kzn@yandex.ru
-      - LEADS_TO_EMAIL=trip-kzn@yandex.ru
+      - SMTP_FROM_EMAIL=s4vaki-notification@yandex.com
+      - LEADS_TO_EMAIL=trip-kzn@mail.ru
     ports:
       - "80:80"
       - "443:443"
