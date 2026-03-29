@@ -10,10 +10,12 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/png" href="assets/logo-trip.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="cursor-glow" aria-hidden="true"></div>
+    <!--
     <header class="site-header">
       <div class="container nav-wrap">
         <a class="brand" href="#">
@@ -29,6 +31,7 @@
         <a class="btn btn-outline" href="#">Подобрать тур</a>
       </div>
     </header>
+    -->
 
     <main>
       <section class="hero parallax-section" id="hero">
@@ -37,39 +40,25 @@
         <div class="hero-bg-layer layer-3" data-speed="0.7"></div>
 
         <div class="container hero-content">
-          <p class="eyebrow">Туры для каждого</p>
-          <p class="hero-kicker">TRIP MODE: ON</p>
-          <h1>
-            Открой мир ярче —
-            <span>с путешествиями, которые подходят именно вам</span>
-          </h1>
-          <p class="hero-subtitle">
-            Семейный отдых, романтические поездки, туры с друзьями и solo-путешествия.
-            Поможем подобрать маршрут по датам, составу семьи и бюджету.
-          </p>
-          <div class="hero-actions">
-            <a href="#tourvisor-search" class="btn btn-primary">Хочу в путешествие</a>
-            <a href="#contacts" class="btn btn-glass">Контакты</a>
-          </div>
+          <div class="hero-main-copy">
+            <p class="eyebrow">Туры для каждого</p>
+            <h1>
+              Время путешествовать —
+              <span>время жить ярко!</span>
+            </h1>
+            <p class="hero-subtitle">
+              Создаём путешествия мечты: укажите даты, состав семьи и бюджет —
+              остальное берём на себя!
+            </p>
+            <div class="hero-actions">
+              <a href="#tourvisor-search" class="btn btn-primary">Хочу в путешествие</a>
+              <a href="#contacts" class="btn btn-glass">Контакты</a>
+            </div>
 
-          <div class="stats-grid">
-            <article>
-              <strong>2 сотрудника/команда</strong>
-              <span>Работаем как единая команда</span>
-            </article>
-            <article>
-              <strong>С 2018 года в туризме</strong>
-              <span>Опыт и экспертность в подборе туров</span>
-            </article>
-            <article>
-              <strong>Тысячи довольных клиентов</strong>
-              <span>Нам доверяют семейный и индивидуальный отдых</span>
-            </article>
-          </div>
-
-          <div class="bonus-offer">
-            <strong>И только у нас! Бонус для наших клиентов!</strong>
-            <span>При бронировании тура от 75 000 ₽/чел. — бесплатный трансфер в аэропорт Казани!</span>
+            <div class="bonus-offer">
+              <strong>И только у нас! Бонус для наших клиентов!</strong>
+              <span>При бронировании тура от 75 000 ₽/чел. — бесплатный трансфер в аэропорт Казани!</span>
+            </div>
           </div>
 
           <div class="hero-orbit" aria-hidden="true">
@@ -91,6 +80,8 @@
             <span>Экскурсионные туры</span>
             <span>Автобусные туры</span>
             <span>Школьные туры</span>
+            <span>Индивидуальные путешествия</span>
+            <span>Визовая поддержка</span>
             <span>Отели</span>
             <span>Авиабилеты</span>
             <span>Страховка</span>
@@ -101,6 +92,8 @@
             <span>Экскурсионные туры</span>
             <span>Автобусные туры</span>
             <span>Школьные туры</span>
+            <span>Индивидуальные путешествия</span>
+            <span>Визовая поддержка</span>
             <span>Отели</span>
             <span>Авиабилеты</span>
             <span>Страховка</span>
@@ -112,7 +105,7 @@
         <div class="container">
           <div class="section-head">
             <p class="eyebrow">Поиск туров</p>
-            <h2>Подберите вариант через Tourvisor</h2>
+            <h2>Удобный поиск тура</h2>
           </div>
           <div class="tv-search-form tv-moduleid-9976347" id="tvModuleContainer"></div>
         </div>
@@ -178,24 +171,20 @@
         </div>
       </section>
 
-      <section class="section experience-grid reveal-item">
+      <section class="section agency-stats reveal-item">
         <div class="container">
-          <div class="section-head">
-            <p class="eyebrow">Формат нового поколения</p>
-            <h2>Это не «просто тур» — это впечатление в режиме high-intensity</h2>
-          </div>
-          <div class="experience-cards">
-            <article class="xp-card" data-tilt>
-              <h3>01 / БЫСТРЫЙ СТАРТ</h3>
-              <p>Подбираем маршрут, отели, активности и перелёты под ваш ритм.</p>
+          <div class="stats-grid">
+            <article>
+              <strong>2 сотрудника</strong>
+              <span>Работаем как единая команда</span>
             </article>
-            <article class="xp-card" data-tilt>
-              <h3>02 / WOW-ПРОДУМАННОСТЬ</h3>
-              <p>Сценарий поездки собирается как кино: эмоции нарастают день за днём.</p>
+            <article>
+              <strong>С 2018 года в туризме</strong>
+              <span>Опыт и экспертность в подборе туров</span>
             </article>
-            <article class="xp-card" data-tilt>
-              <h3>03 / ПОЛНЫЙ КОНТРОЛЬ</h3>
-              <p>Консьерж-поддержка 24/7 и живые апдейты в чате на протяжении всего тура.</p>
+            <article>
+              <strong>Тысячи довольных клиентов</strong>
+              <span>Нам доверяют семейный и индивидуальный отдых</span>
             </article>
           </div>
         </div>
@@ -228,54 +217,38 @@
         </div>
       </section>
 
+      <section class="section cta reveal-item groups-section" id="groups">
+        <div class="container cta-box">
+          <h2>Подключи ленту выгодных туров у себя в мессенджере:</h2>
+          <div class="social-buttons social-buttons-wide">
+            <a class="social-btn is-max" href="https://max.ru/id166109077356_biz" target="_blank" rel="noopener noreferrer">
+              <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
+              <span>Max</span>
+            </a>
+            <a class="social-btn is-telegram" href="https://t.me/trip_kzn" target="_blank" rel="noopener noreferrer">
+              <img class="social-icon" src="assets/logos/telegram.svg" alt="Telegram" />
+              <span>Telegram</span>
+            </a>
+            <a class="social-btn is-whatsapp" href="https://chat.whatsapp.com/KMzXOHxLu4t6FWKant6Tfc?mode=gi_t" target="_blank" rel="noopener noreferrer">
+              <img class="social-icon" src="assets/logos/whatsapp.svg" alt="WhatsApp" />
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section class="section contacts-section reveal-item" id="contacts">
         <div class="container contacts-box">
           <div class="contacts-head">
             <p class="eyebrow">Контакты</p>
-            <h2>Свяжитесь с TriP удобным способом</h2>
+            <h2>Мы всегда с Вами на связи:</h2>
           </div>
 
           <div class="contacts-grid">
-            <article class="contact-card contact-main">
-              <h3>Основные контакты</h3>
-              <div class="contact-main-grid">
-                <div class="contact-mail-col">
-                  <span>Почта</span>
-                  <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a>
-                </div>
-                <div class="contact-phones-col">
-                  <div class="phone-item">
-                    <span>Телефон Татьяны</span>
-                    <a href="tel:+79520423843">+7 952 042-38-43</a>
-                  </div>
-                  <div class="phone-item">
-                    <span>Телефон Ильдара</span>
-                    <a href="tel:+79503203003">+7 950 320-30-03</a>
-                  </div>
-                </div>
-              </div>
-            </article>
-
-            <article class="contact-card contact-messengers">
-              <h3>Группы</h3>
-              <div class="social-buttons">
-                <a class="social-btn is-max" href="https://max.ru/join/RaojNQfLXSa0rBVRJH8SKXmDjZ1iiKYPlExhWTyODDY" target="_blank" rel="noopener noreferrer">
-                  <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
-                  <span>Max</span>
-                </a>
-                <a class="social-btn is-telegram" href="https://t.me/trip_kzn" target="_blank" rel="noopener noreferrer">
-                  <img class="social-icon" src="assets/logos/telegram.svg" alt="Telegram" />
-                  <span>Telegram</span>
-                </a>
-                <a class="social-btn is-whatsapp" href="https://chat.whatsapp.com/KMzXOHxLu4t6FWKant6Tfc?mode=gi_t" target="_blank" rel="noopener noreferrer">
-                  <img class="social-icon" src="assets/logos/whatsapp.svg" alt="WhatsApp" />
-                  <span>WhatsApp</span>
-                </a>
-              </div>
-            </article>
-
-            <article class="contact-card contact-messengers">
-              <h3>Личные сообщения</h3>
+            <article class="contact-card person-card">
+              <img class="person-photo" src="assets/images/archive/Татьяна-3.jpg" alt="Татьяна" />
+              <h3>Татьяна</h3>
+              <a class="person-phone" href="tel:+79520423843">+7 952 042-38-43</a>
               <div class="social-buttons">
                 <a class="social-btn is-max" href="https://max.ru/u/f9LHodD0cOItNyagcYOhKrzZhhgJZolK5bDR447FSqGWYM7ax5pTA-VrBxM" target="_blank" rel="noopener noreferrer">
                   <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
@@ -292,10 +265,33 @@
               </div>
             </article>
 
+            <article class="contact-card person-card">
+              <img class="person-photo" src="assets/images/archive/Ильдар-1.jpg" alt="Ильдар" />
+              <h3>Ильдар</h3>
+              <a class="person-phone" href="tel:+79503203003">+7 950 320-30-03</a>
+              <div class="social-buttons">
+                <a class="social-btn is-max" href="https://max.ru/u/f9LHodD0cOJUHjzsrGO2D7S5zmGsbfHgxdQoEDkV16nbBhFUnbZVp5Odl18" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/max.svg" alt="Max" />
+                  <span>Max</span>
+                </a>
+                <a class="social-btn is-telegram" href="https://t.me/Voyager_kzn" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/telegram.svg" alt="Telegram" />
+                  <span>Telegram</span>
+                </a>
+                <a class="social-btn is-whatsapp" href="https://wa.me/qr/3VWHGJGQEISTO1" target="_blank" rel="noopener noreferrer">
+                  <img class="social-icon" src="assets/logos/whatsapp.svg" alt="WhatsApp" />
+                  <span>WhatsApp</span>
+                </a>
+              </div>
+            </article>
+
             <article class="contact-card requisites">
               <h3>Гос. реквизиты</h3>
               <div class="req-items">
+                <p><span>Адрес:</span> 420140, Казань, ул. Профсоюзная, 6Б</p>
+                <p><span>Email:</span> <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a></p>
                 <p><span>ИНН:</span> 166109077356</p>
+                <p><span>ОГРН:</span> 326169000032396</p>
                 <p><span>Номер в реестре РТА:</span> 0052427</p>
               </div>
             </article>
@@ -307,8 +303,13 @@
     <footer class="site-footer">
       <div class="container footer-wrap">
         <a class="brand" href="#">
-          <img src="assets/brand/logo.png" alt="TriP" />
+          <img src="assets/logo-trip.png" alt="TriP" />
         </a>
+        <div class="footer-copy">
+          <p>(C) 2026 Tri P — Туристическое агентство</p>
+          <p>Все предложения на сайте не являются публичной офертой и носят информационный характер</p>
+          <a href="privacy.html">Положение об обработке персональных данных</a>
+        </div>
       </div>
     </footer>
 
