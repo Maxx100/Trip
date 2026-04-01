@@ -124,7 +124,7 @@ def script_js():
     return FileResponse(STATIC_DIR / "script.js")
 
 
-@app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
 
 
 @app.get("/{path:path}", include_in_schema=False)
