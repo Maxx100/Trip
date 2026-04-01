@@ -4,6 +4,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -17,6 +18,7 @@ class CurrencyRate:
     
     def _build_options(self) -> Options:
         options = Options()
+        options.binary_location = "/usr/bin/chromium"
         options.add_argument("--headless")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
@@ -49,7 +51,8 @@ class CurrencyRate:
         return parsed
 
     def fetch(self) -> dict[str, list[list[Any]]]:
-        driver = webdriver.Chrome(options=self._build_options())
+        service = Service(executable_path="/usr/bin/chromedriver")
+        driver = webdriver.Chrome(service=service, options=self._build_options())
         try:
             driver.get(self.url)
             WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table")))
