@@ -15,23 +15,20 @@
   </head>
   <body>
     <div class="cursor-glow" aria-hidden="true"></div>
-    <!--
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="#">
-          <img src="assets/brand/logo.png" alt="TriP" />
+        <a class="brand" href="/">
+          <img src="assets/logo-trip.png" alt="TriP" />
         </a>
         <nav class="nav-links">
-          <a href="#">Туры</a>
-          <a href="#">Направления</a>
-          <a href="#">О нас</a>
-          <a href="#">Отзывы</a>
-          <a href="#">Контакты</a>
+          <a href="/why-us">Почему мы?</a>
+          <a href="/currency-rate">Курс валют</a>
+          <a href="/how-selection-works">Как происходит подбор</a>
+          <a href="/link">Ссылка</a>
         </nav>
-        <a class="btn btn-outline" href="#">Подобрать тур</a>
+        <a class="btn btn-outline" href="#trip-form">Оставить заявку</a>
       </div>
     </header>
-    -->
 
     <main>
       <section class="hero parallax-section" id="hero">
@@ -41,7 +38,6 @@
 
         <div class="container hero-content">
           <div class="hero-main-copy">
-            <p class="eyebrow">Туры для каждого</p>
             <h1>
               Время путешествовать —
               <span>время жить ярко!</span>
@@ -53,7 +49,6 @@
             <div class="hero-actions">
               <a href="#tourvisor-search" class="btn btn-primary">Хочу в путешествие</a>
               <a href="#groups" class="btn btn-glass">Наши соцсети</a>
-              <a href="why-us.html" class="btn btn-glass">Почему мы?</a>
             </div>
 
             <div class="bonus-offer">
@@ -168,25 +163,6 @@
         </div>
       </section>
 
-      <section class="section agency-stats reveal-item">
-        <div class="container">
-          <div class="stats-grid">
-            <article>
-              <strong>2 сотрудника</strong>
-              <span>Работаем как единая команда</span>
-            </article>
-            <article>
-              <strong>С 2018 года в туризме</strong>
-              <span>Опыт и экспертность в подборе туров</span>
-            </article>
-            <article>
-              <strong>Тысячи довольных клиентов</strong>
-              <span>Нам доверяют семейный и индивидуальный отдых</span>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section class="section cta reveal-item" id="trip-form">
         <div class="container cta-box form-box">
           <h2>Оставьте заявку на подбор тура</h2>
@@ -209,7 +185,13 @@
               <span>Пожелания по туру (даты, страна, состав семьи, примерный бюджет)</span>
               <textarea name="wishes" rows="5" placeholder="Например: июль, Турция, 2 взрослых + 1 ребёнок, бюджет до 250 000 ₽"></textarea>
             </label>
-            <button class="btn btn-primary" type="submit">Отправить заявку</button>
+            <div class="form-submit-row full">
+              <button class="btn btn-primary" type="submit">Отправить заявку</button>
+              <p class="form-consent-note">
+                Заполняя форму, Вы даете согласие на обработку персональных данных в соответствии с
+                <a href="/privacy">положением</a>.
+              </p>
+            </div>
           </form>
         </div>
       </section>
@@ -244,10 +226,10 @@
         <div class="footer-copy">
           <p>(C) 2026 Tri P — Туристическое агентство</p>
           <p>Все предложения на сайте не являются публичной офертой и носят информационный характер</p>
-          <a href="privacy.html">Положение об обработке персональных данных</a>
+          <a href="/privacy">Положение об обработке персональных данных</a>
         </div>
         <div class="footer-requisites" id="requisites">
-          <h4>Реквезиты</h4>
+          <h4>Реквизиты</h4>
           <p><span>Адрес:</span> 420140, Казань, ул. Профсоюзная, 6Б</p>
           <p><span>Email:</span> <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a></p>
           <p><span>ИНН:</span> 166109077356</p>
