@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Курс валют — TriP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="assets/logo-trip.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="/">
+          <img src="assets/logo-trip.png" alt="TriP" />
+        </a>
+        <nav class="nav-links">
+          <a href="/why-us">Почему мы?</a>
+          <a href="/currency-rate">Курс валют</a>
+          <a href="/how-selection-works">Как происходит подбор</a>
+          <a href="/link">Ссылка</a>
+        </nav>
+        <a class="btn btn-outline" href="/#trip-form">Оставить заявку</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="section currency-page">
+        <div class="container">
+          <div class="section-head">
+            <h1>Курсы валют туроператоров</h1>
+            <p id="currencyUpdatedAt" class="currency-meta">Обновляем данные…</p>
+          </div>
+
+          <div id="currencyError" class="currency-error" hidden></div>
+
+          <div class="currency-grid">
+            <article class="contact-card currency-card">
+              <h3>Сегодня</h3>
+              <div class="currency-table-wrap">
+                <table class="currency-table" id="currencyTodayTable">
+                  <thead>
+                    <tr>
+                      <th>Туроператор</th>
+                      <th>EUR</th>
+                      <th>USD</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </article>
+
+            <article class="contact-card currency-card">
+              <h3>Завтра</h3>
+              <div class="currency-table-wrap">
+                <table class="currency-table" id="currencyTomorrowTable">
+                  <thead>
+                    <tr>
+                      <th>Туроператор</th>
+                      <th>EUR</th>
+                      <th>USD</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <a class="brand" href="/">
+          <img src="assets/logo-trip.png" alt="TriP" />
+        </a>
+        <div class="footer-copy">
+          <p>(C) 2026 Tri P — Туристическое агентство</p>
+          <p>Все предложения на сайте не являются публичной офертой и носят информационный характер</p>
+          <a href="/privacy">Положение об обработке персональных данных</a>
+        </div>
+        <div class="footer-requisites" id="requisites">
+          <h4>Реквизиты</h4>
+          <p><span>Адрес:</span> 420140, Казань, ул. Профсоюзная, 6Б</p>
+          <p><span>Email:</span> <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a></p>
+          <p><span>ИНН:</span> 166109077356</p>
+          <p><span>ОГРН:</span> 326169000032396</p>
+          <p><span>РТА:</span> 0052427</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/currency-rate.js"></script>
+  </body>
+</html>
