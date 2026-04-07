@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import threading
 import time
 
@@ -29,8 +30,85 @@ class LeadRequest(BaseModel):
 notifier = Notify()
 currency_rate = CurrencyRate()
 currency_cache_lock = threading.Lock()
-currency_cache: dict = {"updated_at": 0.0, "data": None}
-CURRENCY_CACHE_TTL_SECONDS = 1800
+currency_cache: dict = {"updated_at": 0.0, "data": None, "last_error": None}
+CURRENCY_REFRESH_INTERVAL_SECONDS = 1800
+currency_worker_stop_event = threading.Event()
+currency_worker_thread: threading.Thread | None = None
+CURRENCY_CACHE_FILE = BASE_DIR / "logs" / "currency_cache.json"
+
+
+def _save_currency_cache_to_file(data: dict, updated_at: float) -> None:
+    CURRENCY_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "updated_at": int(updated_at),
+        "rates": data,
+    }
+    with CURRENCY_CACHE_FILE.open("w", encoding="utf-8") as file:
+        json.dump(payload, file, ensure_ascii=False)
+
+
+def _load_currency_cache_from_file() -> bool:
+    if not CURRENCY_CACHE_FILE.exists():
+        return False
+
+    try:
+        with CURRENCY_CACHE_FILE.open("r", encoding="utf-8") as file:
+            payload = json.load(file)
+        rates = payload.get("rates")
+        updated_at = float(payload.get("updated_at", 0))
+        if not rates:
+            return False
+
+        with currency_cache_lock:
+            currency_cache["data"] = rates
+            currency_cache["updated_at"] = updated_at
+            currency_cache["last_error"] = None
+        return True
+    except Exception as error:
+        logger.warning("Failed to load currency cache from file: %s", error)
+        return False
+
+
+def refresh_currency_cache_once() -> None:
+    now = time.time()
+    try:
+        fresh_data = currency_rate.fetch()
+    except Exception as error:
+        logger.exception("Failed to fetch currency rates in background refresh")
+        with currency_cache_lock:
+            currency_cache["last_error"] = str(error)
+        return
+
+    with currency_cache_lock:
+        currency_cache["data"] = fresh_data
+        currency_cache["updated_at"] = now
+        currency_cache["last_error"] = None
+
+    try:
+        _save_currency_cache_to_file(fresh_data, now)
+    except Exception as error:
+        logger.warning("Failed to save currency cache to file: %s", error)
+
+
+def currency_worker_loop() -> None:
+    while not currency_worker_stop_event.is_set():
+        refresh_currency_cache_once()
+        currency_worker_stop_event.wait(CURRENCY_REFRESH_INTERVAL_SECONDS)
+
+
+@app.on_event("startup")
+def start_currency_worker() -> None:
+    _load_currency_cache_from_file()
+
+    global currency_worker_thread
+    currency_worker_stop_event.clear()
+    currency_worker_thread = threading.Thread(target=currency_worker_loop, daemon=True, name="currency-worker")
+    currency_worker_thread.start()
+
+
+@app.on_event("shutdown")
+def stop_currency_worker() -> None:
+    currency_worker_stop_event.set()
 
 
 @app.post("/api/lead")
@@ -55,32 +133,23 @@ def create_lead(lead: LeadRequest):
 
 @app.get("/api/currency-rate")
 def get_currency_rate():
-    now = time.time()
-
     with currency_cache_lock:
-        if currency_cache["data"] and (now - currency_cache["updated_at"] < CURRENCY_CACHE_TTL_SECONDS):
-            return {
-                "status": "ok",
-                "source": "cache",
-                "updated_at": int(currency_cache["updated_at"]),
-                "rates": currency_cache["data"],
-            }
+        cached_data = currency_cache["data"]
+        updated_at = currency_cache["updated_at"]
+        last_error = currency_cache["last_error"]
 
-    try:
-        fresh_data = currency_rate.fetch()
-    except Exception as error:
-        logger.exception("Failed to fetch currency rates")
-        raise HTTPException(status_code=502, detail=f"Failed to fetch currency rates: {error}")
-
-    with currency_cache_lock:
-        currency_cache["data"] = fresh_data
-        currency_cache["updated_at"] = now
+    if not cached_data:
+        raise HTTPException(
+            status_code=503,
+            detail="Currency rates are being prepared. Please try again shortly.",
+        )
 
     return {
         "status": "ok",
-        "source": "fresh",
-        "updated_at": int(now),
-        "rates": fresh_data,
+        "source": "cache",
+        "updated_at": int(updated_at),
+        "rates": cached_data,
+        "warning": last_error,
     }
 
 
@@ -109,9 +178,9 @@ def how_selection_works_page():
     return FileResponse(STATIC_DIR / "how-selection-works.html")
 
 
-@app.get("/link", include_in_schema=False)
-def placeholder_link_page():
-    return RedirectResponse(url="/#groups", status_code=307)
+@app.get("/reviews", include_in_schema=False)
+def reviews_page():
+    return RedirectResponse(url="/", status_code=307)
 
 
 @app.get("/styles.css", include_in_schema=False)

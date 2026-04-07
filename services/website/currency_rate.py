@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Any
 
 from bs4 import BeautifulSoup
@@ -25,6 +26,27 @@ class CurrencyRate:
         options.add_argument("--disable-gpu")
         return options
 
+    @staticmethod
+    def _normalize_operator_name(name: str) -> str:
+        lowered = name.lower().replace("ё", "е")
+        return re.sub(r"[^a-zа-я0-9]+", "", lowered)
+
+    def _should_skip_operator(self, operator_name: str) -> bool:
+        normalized = self._normalize_operator_name(operator_name)
+        blocked_fragments = (
+            "сабре",
+            "sabre",
+            "тезтур",
+            "teztour",
+            "tez",
+            "туркасса",
+            "tourkassa",
+            "пакс",
+            "paks",
+            "pax",
+        )
+        return any(fragment in normalized for fragment in blocked_fragments)
+
     def _table_to_list(self, table) -> list[list[Any]]:
         data = []
         rows = table.find_all("tr")
@@ -42,6 +64,8 @@ class CurrencyRate:
                 continue
             try:
                 operator_name = row[0].split("ИКС:")[0].strip()
+                if self._should_skip_operator(operator_name):
+                    continue
                 eur_value = float(row[1].replace(",", "."))
                 usd_value = float(row[4].replace(",", "."))
                 parsed.append([operator_name, eur_value, usd_value])
@@ -63,8 +87,8 @@ class CurrencyRate:
                 raise ValueError(f"Expected at least 3 tables, but found {len(tables)}")
 
             return {
-                "today": self._table_to_list(tables[1]),
-                "tomorrow": self._table_to_list(tables[2]),
+                "today": self._table_to_list(tables[2]),
+                "tomorrow": self._table_to_list(tables[1]),
             }
         finally:
             driver.quit()
