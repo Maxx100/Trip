@@ -672,6 +672,10 @@ h1 span {
   padding-top: 3.3rem;
 }
 
+#trip-form {
+  padding-bottom: 2.2rem;
+}
+
 .agency-stats {
   padding-top: 2.2rem;
   padding-bottom: 0.8rem;
@@ -933,8 +937,74 @@ h1 span {
 }
 
 .groups-section {
-  padding-top: 1rem;
+  padding-top: 1.1rem;
   padding-bottom: 1.5rem;
+}
+
+.map-section {
+  padding-top: 2.9rem;
+  padding-bottom: 2.9rem;
+}
+
+.map-section .cta-box {
+  text-align: left;
+}
+
+.map-section #map {
+  margin-top: 1rem;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.operators-section {
+  padding-top: 3.3rem;
+  padding-bottom: 0.6rem;
+}
+
+.operators-section .cta-box {
+  text-align: center;
+}
+
+.operators-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.operator-logo-card {
+  min-height: 86px;
+  border: 1px solid rgba(183, 119, 54, 0.26);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  padding: 0.55rem;
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.operator-logo-card img {
+  width: 100%;
+  max-width: 122px;
+  max-height: 44px;
+  object-fit: contain;
+  opacity: 1;
+  transition: opacity 0.22s ease;
+}
+
+.operator-logo-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(228, 129, 28, 0.62);
+  box-shadow: 0 10px 20px rgba(148, 93, 38, 0.14);
+}
+
+.operator-logo-card:hover img {
+  opacity: 1;
+}
+
+.operator-logo-card--r-express img {
+  max-height: 62px;
+  max-width: 96px;
 }
 
 .groups-section .cta-box {
@@ -1080,37 +1150,76 @@ h1 span {
 }
 
 .privacy-doc h1 {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.5rem;
   font-size: clamp(1.75rem, 3.2vw, 2.45rem);
+  color: #6f431a;
+  line-height: 1.2;
 }
 
 .privacy-owner {
-  margin-bottom: 1rem;
+  margin-bottom: 1.6rem;
   font-weight: 600;
+  color: #6f4e2f;
 }
 
 .privacy-doc p {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.95rem;
   max-width: none;
+  color: #5d3f24;
+  line-height: 1.6;
 }
 
 .privacy-doc h2 {
-  margin-top: 1.2rem;
-  margin-bottom: 0.55rem;
-  font-size: 1.15rem;
-  color: #7a4b1e;
+  margin-top: 2rem;
+  margin-bottom: 0.95rem;
+  font-size: clamp(1.2rem, 2vw, 1.38rem);
+  color: #6f431a;
+  line-height: 1.25;
 }
 
-.privacy-doc ol,
+.privacy-doc h3 {
+  margin-top: 1.35rem;
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.05rem, 1.8vw, 1.18rem);
+  color: #6f431a;
+  line-height: 1.3;
+}
+
 .privacy-doc ul {
-  margin: 0 0 0.35rem;
-  padding-left: 1.25rem;
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  list-style: disc;
   color: #5d3f24;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.privacy-doc ul.numbered-list {
+  list-style: none;
+}
+
+.privacy-doc ul ul {
+  margin-top: 0.45rem;
+  margin-bottom: 0.85rem;
+  padding-left: 1.5rem;
+}
+
+.privacy-doc ul ul ul {
+  padding-left: 1.8rem;
+}
+
+.privacy-doc ul.numbered-list ul,
+.privacy-doc ul.numbered-list ul ul {
+  list-style: none;
 }
 
 .privacy-doc li {
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.privacy-doc p + ul,
+.privacy-doc p + h3,
+.privacy-doc ul + p {
+  margin-top: 0.45rem;
 }
 
 .why-head {
@@ -1327,6 +1436,10 @@ h1 span {
     grid-template-columns: 1fr;
   }
 
+  .operators-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .why-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1378,6 +1491,15 @@ h1 span {
 
   .footer-requisites {
     max-width: none;
+  }
+
+  .operators-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+  }
+
+  .operator-logo-card {
+    min-height: 78px;
   }
 
 }
