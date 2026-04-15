@@ -6,6 +6,23 @@ function formatDateTime(unixTs) {
   }).format(date);
 }
 
+function getMoscowHour() {
+  const hourString = new Intl.DateTimeFormat('ru-RU', {
+    hour: '2-digit',
+    hour12: false,
+    timeZone: 'Europe/Moscow'
+  }).format(new Date());
+
+  return Number.parseInt(hourString, 10);
+}
+
+function updateTomorrowTitle() {
+  const tomorrowTitle = document.getElementById('currencyTomorrowTitle');
+  if (!tomorrowTitle) return;
+
+  tomorrowTitle.textContent = getMoscowHour() < 18 ? 'Завтра (прогноз)' : 'Завтра';
+}
+
 function renderRows(tableId, rows) {
   const tbody = document.querySelector(`#${tableId} tbody`);
   if (!tbody) return;
@@ -25,6 +42,8 @@ function renderRows(tableId, rows) {
 }
 
 async function loadCurrencyRates() {
+  updateTomorrowTitle();
+
   const errorBox = document.getElementById('currencyError');
   const updatedAt = document.getElementById('currencyUpdatedAt');
   const currencyGrid = document.querySelector('.currency-grid');
