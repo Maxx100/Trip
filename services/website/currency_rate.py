@@ -123,6 +123,8 @@ class CurrencyRate:
 
             for row in table.find_all("tr"):
                 row_text = row.get_text(" ", strip=True).lower()
+                if "завтра" not in row_text:
+                    continue
                 numbers = [self._parse_float(match) for match in re.findall(r"\d+[.,]\d+", row_text)]
                 if len(numbers) < 2:
                     continue
@@ -135,6 +137,29 @@ class CurrencyRate:
                 return usd_today, usd_tomorrow, eur_today, eur_tomorrow
 
         return usd_today, usd_tomorrow, eur_today, eur_tomorrow
+
+    def _extract_cbr_rates_from_widget(self, soup: BeautifulSoup) -> tuple[float | None, float | None, float | None, float | None]:
+        key_map = {
+            "eur-cbr-today": None,
+            "eur-tomorrow": None,
+            "usd-cbr-today": None,
+            "usd-tomorrow": None,
+        }
+
+        for key in key_map:
+            node = soup.select_one(f".tmw-item[data-key='{key}'] .tmw-value")
+            if node:
+                try:
+                    key_map[key] = self._parse_float(node.get_text(" ", strip=True))
+                except ValueError:
+                    key_map[key] = None
+
+        return (
+            key_map["usd-cbr-today"],
+            key_map["usd-tomorrow"],
+            key_map["eur-cbr-today"],
+            key_map["eur-tomorrow"],
+        )
 
     def _extract_cbr_rates_from_text(self, soup: BeautifulSoup) -> tuple[float | None, float | None, float | None, float | None]:
         full_text = soup.get_text(" ", strip=True)
@@ -161,7 +186,14 @@ class CurrencyRate:
         return usd_today, usd_tomorrow, eur_today, eur_tomorrow
 
     def _extract_cbr_change_ratios(self, soup: BeautifulSoup) -> tuple[float, float]:
-        usd_today, usd_tomorrow, eur_today, eur_tomorrow = self._extract_cbr_rates_from_tables(soup)
+        usd_today, usd_tomorrow, eur_today, eur_tomorrow = self._extract_cbr_rates_from_widget(soup)
+
+        if None in (usd_today, usd_tomorrow, eur_today, eur_tomorrow):
+            table_values = self._extract_cbr_rates_from_tables(soup)
+            usd_today = usd_today if usd_today is not None else table_values[0]
+            usd_tomorrow = usd_tomorrow if usd_tomorrow is not None else table_values[1]
+            eur_today = eur_today if eur_today is not None else table_values[2]
+            eur_tomorrow = eur_tomorrow if eur_tomorrow is not None else table_values[3]
 
         if None in (usd_today, usd_tomorrow, eur_today, eur_tomorrow):
             text_values = self._extract_cbr_rates_from_text(soup)
