@@ -56,7 +56,7 @@ async function loadCurrencyRates() {
     }
 
     if (updatedAt) {
-      updatedAt.textContent = `Обновлено: ${formatDateTime(payload.updated_at)} (${payload.source === 'cache' ? 'кэш' : 'актуальные данные'})`;
+      updatedAt.textContent = `Обновлено: ${formatDateTime(payload.updated_at)}`;
     }
   } catch (error) {
     if (currencyGrid) {
