@@ -4,7 +4,7 @@ import threading
 import time
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import logging
 from pydantic import BaseModel
@@ -180,7 +180,7 @@ def how_selection_works_page():
 
 @app.get("/reviews", include_in_schema=False)
 def reviews_page():
-    return RedirectResponse(url="/", status_code=307)
+    return FileResponse(STATIC_DIR / "reviews.html")
 
 
 @app.get("/styles.css", include_in_schema=False)
