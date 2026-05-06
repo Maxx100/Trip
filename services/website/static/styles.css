@@ -1011,6 +1011,11 @@ h1 span {
   max-width: 96px;
 }
 
+.operator-logo-card--intourvolga img {
+  max-width: 159px;
+  max-height: 57px;
+}
+
 .groups-section .cta-box {
   text-align: center;
 }
