@@ -961,6 +961,10 @@ h1 span {
   padding-bottom: 0.6rem;
 }
 
+#operators {
+  scroll-margin-top: 96px;
+}
+
 .operators-section .cta-box {
   text-align: center;
 }
@@ -1005,6 +1009,11 @@ h1 span {
 .operator-logo-card--r-express img {
   max-height: 62px;
   max-width: 96px;
+}
+
+.operator-logo-card--intourvolga img {
+  max-width: 159px;
+  max-height: 57px;
 }
 
 .groups-section .cta-box {

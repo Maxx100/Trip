@@ -211,6 +211,25 @@ if (tvModuleContainer) {
   }, 2500);
 }
 
+function stabilizeHashScroll() {
+  const hash = window.location.hash;
+  if (!hash) return;
+
+  const target = document.querySelector(hash);
+  if (!target) return;
+
+  const scrollToTarget = () => {
+    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  };
+
+  // First correction after initial layout, second one after async widgets settle.
+  window.requestAnimationFrame(scrollToTarget);
+  window.setTimeout(scrollToTarget, 900);
+  window.setTimeout(scrollToTarget, 2200);
+}
+
+window.addEventListener('load', stabilizeHashScroll);
+
 const TOURVISOR_CONFIG = {
   endpoint: '',
   authToken: '',
