@@ -961,6 +961,10 @@ h1 span {
   padding-bottom: 0.6rem;
 }
 
+#operators {
+  scroll-margin-top: 96px;
+}
+
 .operators-section .cta-box {
   text-align: center;
 }
