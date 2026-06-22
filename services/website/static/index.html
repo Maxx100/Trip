@@ -265,7 +265,7 @@
         </div>
         <div class="footer-requisites" id="requisites">
           <p><span>Номер в реестре турагентств:</span> 0052427</p>
-          <p><span>Адрес:</span> 420140, Казань, ул. Профсоюзная, 6Б</p>
+          <p><span>Адрес:</span> 420015, Казань, ул. Карла Маркса, 53</p>
           <p><span>Email:</span> <a href="mailto:trip-kzn@mail.ru">trip-kzn@mail.ru</a></p>
           <p><span>ИНН:</span> 166109077356</p>
           <p><span>ОГРН:</span> 326169000032396</p>
@@ -278,24 +278,40 @@
     <script type="text/javascript">
       ymaps.ready(init);
       function init() {
-        var myMap = new ymaps.Map("map", {
-          center: [55.762181, 49.260430],
-          zoom: 12,
-          controls: ['zoomControl', 'typeSelector']
-        });
+        var officeAddress = 'Казань, улица Карла Маркса, 53';
+        // Запасные координаты офиса на случай, если геокодер недоступен.
+        var fallbackCoords = [55.79555, 49.13424];
 
-        var myPlacemark = new ymaps.Placemark(
-          [55.762181, 49.260430],
-          {
-            hintContent: 'Наш офис',
-            balloonContent: 'Адрес: г. Казань, ул. Профсоюзная (Вознесенское), 6Б'
+        function renderMap(coords) {
+          var myMap = new ymaps.Map("map", {
+            center: coords,
+            zoom: 17,
+            controls: ['zoomControl', 'typeSelector']
+          });
+
+          var myPlacemark = new ymaps.Placemark(
+            coords,
+            {
+              hintContent: 'Наш офис',
+              balloonContent: 'Адрес: г. Казань, ул. Карла Маркса, 53'
+            },
+            {
+              preset: 'islands#redDotIcon'
+            }
+          );
+
+          myMap.geoObjects.add(myPlacemark);
+        }
+
+        ymaps.geocode(officeAddress, { results: 1 }).then(
+          function (res) {
+            var firstResult = res.geoObjects.get(0);
+            renderMap(firstResult ? firstResult.geometry.getCoordinates() : fallbackCoords);
           },
-          {
-            preset: 'islands#redDotIcon'
+          function () {
+            renderMap(fallbackCoords);
           }
         );
-
-        myMap.geoObjects.add(myPlacemark);
       }
     </script>
     <script src="script.js"></script>

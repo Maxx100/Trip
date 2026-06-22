@@ -77,8 +77,10 @@ class CurrencyRate:
         options.add_argument("--no-first-run")
         options.add_argument("--no-default-browser-check")
         options.add_argument("--window-size=1920,1080")
-        options.add_argument("--remote-debugging-port=9222")
-        options.add_argument("--remote-allow-origins=*")
+        # Не задаём фиксированный --remote-debugging-port: при перезапусках/падениях
+        # Chrome зависший процесс держит порт, и новые сессии падают с
+        # SessionNotCreatedException ("Chrome instance exited"). Пусть порт выбирается
+        # автоматически (chromedriver сам управляет подключением к DevTools).
         options.add_argument(f"--user-data-dir={user_data_dir}")
         return options
 
