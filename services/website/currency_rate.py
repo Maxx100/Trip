@@ -1,9 +1,14 @@
 import logging
+import os
 import re
+import shutil
+import tempfile
+from pathlib import Path
 from typing import Any
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.common.exceptions import SessionNotCreatedException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -16,14 +21,67 @@ logger = logging.getLogger(__name__)
 class CurrencyRate:
     def __init__(self):
         self.url = "https://tour-kassa.ru/%D0%BA%D1%83%D1%80%D1%81%D1%8B-%D0%B2%D0%B0%D0%BB%D1%8E%D1%82-%D1%82%D1%83%D1%80%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%BE%D0%B2"
+        self.base_dir = Path(__file__).resolve().parent
+        self.logs_dir = self.base_dir / "logs"
+
+    @staticmethod
+    def _resolve_binary_path(candidates: list[str]) -> str | None:
+        for candidate in candidates:
+            if not candidate:
+                continue
+            path = Path(candidate)
+            if path.is_absolute() and path.exists():
+                return str(path)
+            resolved = shutil.which(candidate)
+            if resolved:
+                return resolved
+        return None
     
-    def _build_options(self) -> Options:
+    def _resolve_chrome_binary(self) -> str | None:
+        return self._resolve_binary_path(
+            [
+                os.getenv("CHROME_BINARY", ""),
+                "/usr/bin/chromium",
+                "/usr/bin/chromium-browser",
+                "/usr/bin/google-chrome",
+                "chromium",
+                "chromium-browser",
+                "google-chrome",
+            ]
+        )
+
+    def _resolve_chromedriver_binary(self) -> str:
+        resolved = self._resolve_binary_path(
+            [
+                os.getenv("CHROMEDRIVER_BINARY", ""),
+                "/usr/bin/chromedriver",
+                "chromedriver",
+            ]
+        )
+        if not resolved:
+            raise RuntimeError("Chromedriver binary was not found in common paths")
+        return resolved
+
+    def _build_options(self, user_data_dir: str) -> Options:
         options = Options()
-        options.binary_location = "/usr/bin/chromium"
-        options.add_argument("--headless")
+        chrome_binary = self._resolve_chrome_binary()
+        if chrome_binary:
+            options.binary_location = chrome_binary
+
+        options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
+        options.add_argument("--disable-setuid-sandbox")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--disable-gpu")
+        options.add_argument("--disable-software-rasterizer")
+        options.add_argument("--no-first-run")
+        options.add_argument("--no-default-browser-check")
+        options.add_argument("--window-size=1920,1080")
+        # Не задаём фиксированный --remote-debugging-port: при перезапусках/падениях
+        # Chrome зависший процесс держит порт, и новые сессии падают с
+        # SessionNotCreatedException ("Chrome instance exited"). Пусть порт выбирается
+        # автоматически (chromedriver сам управляет подключением к DevTools).
+        options.add_argument(f"--user-data-dir={user_data_dir}")
         return options
 
     @staticmethod
@@ -218,37 +276,54 @@ class CurrencyRate:
         return usd_ratio, eur_ratio
 
     def fetch(self) -> dict[str, list[list[Any]]]:
-        service = Service(executable_path="/usr/bin/chromedriver")
-        driver = webdriver.Chrome(service=service, options=self._build_options())
-        try:
-            driver.get(self.url)
-            WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table")))
+        self.logs_dir.mkdir(parents=True, exist_ok=True)
+        driver_log_path = self.logs_dir / "chromedriver.log"
+        service = Service(
+            executable_path=self._resolve_chromedriver_binary(),
+            service_args=["--verbose", f"--log-path={driver_log_path}"],
+        )
 
-            soup = BeautifulSoup(driver.page_source, "html.parser")
-            operator_table = self._find_operator_table(soup)
-            if operator_table is None:
-                raise ValueError("Could not find operator rates table on source page")
+        with tempfile.TemporaryDirectory(prefix="trip-chrome-") as profile_dir:
+            driver = None
+            try:
+                driver = webdriver.Chrome(service=service, options=self._build_options(profile_dir))
+                driver.get(self.url)
+                WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table")))
 
-            today = self._table_to_list(operator_table)
-            if not today:
-                raise ValueError("Operator rates table was found but no rows could be parsed")
+                soup = BeautifulSoup(driver.page_source, "html.parser")
+                operator_table = self._find_operator_table(soup)
+                if operator_table is None:
+                    raise ValueError("Could not find operator rates table on source page")
 
-            usd_ratio, eur_ratio = self._extract_cbr_change_ratios(soup)
-            tomorrow = [
-                [
-                    operator_name,
-                    round(eur_value * eur_ratio, 2),
-                    round(usd_value * usd_ratio, 2),
+                today = self._table_to_list(operator_table)
+                if not today:
+                    raise ValueError("Operator rates table was found but no rows could be parsed")
+
+                usd_ratio, eur_ratio = self._extract_cbr_change_ratios(soup)
+                tomorrow = [
+                    [
+                        operator_name,
+                        round(eur_value * eur_ratio, 2),
+                        round(usd_value * usd_ratio, 2),
+                    ]
+                    for operator_name, eur_value, usd_value in today
                 ]
-                for operator_name, eur_value, usd_value in today
-            ]
 
-            return {
-                "today": today,
-                "tomorrow": tomorrow,
-            }
-        finally:
-            driver.quit()
+                return {
+                    "today": today,
+                    "tomorrow": tomorrow,
+                }
+            except SessionNotCreatedException:
+                logger.exception(
+                    "Failed to start Chrome session. chromedriver log: %s, chrome binary: %s, chromedriver binary: %s",
+                    driver_log_path,
+                    self._resolve_chrome_binary(),
+                    self._resolve_chromedriver_binary(),
+                )
+                raise
+            finally:
+                if driver is not None:
+                    driver.quit()
 
     def update(self) -> tuple[list[list[Any]], list[list[Any]]]:
         data = self.fetch()
