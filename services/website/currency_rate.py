@@ -112,6 +112,10 @@ class CurrencyRate:
         )
         return any(fragment in normalized for fragment in blocked_fragments)
 
+    @staticmethod
+    def _clean_operator_name(raw_name: str) -> str:
+        return re.sub(r"\s*\d*\s*ИКС\s*:?\s*\d+.*$", "", raw_name).strip()
+
     def _table_to_list(self, table) -> list[list[Any]]:
         data = []
         rows = table.find_all("tr")
@@ -137,7 +141,7 @@ class CurrencyRate:
             if len(row) <= required_index:
                 continue
             try:
-                operator_name = row[operator_idx].split("ИКС:")[0].strip()
+                operator_name = self._clean_operator_name(row[operator_idx])
                 if not operator_name:
                     continue
                 if self._should_skip_operator(operator_name):
