@@ -3,8 +3,8 @@ import json
 import threading
 import time
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import logging
 from pydantic import BaseModel
@@ -18,6 +18,33 @@ logger = logging.getLogger(__name__)
 app = FastAPI(docs_url=None, redoc_url=None)
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
+
+HTTP_REDIRECT_PORT = 80
+http_redirect_app = FastAPI(docs_url=None, redoc_url=None)
+
+
+@http_redirect_app.api_route("/{path:path}", methods=["GET", "HEAD"])
+def redirect_to_https(request: Request, path: str):
+    target = f"https://{request.url.hostname}{request.url.path}"
+    if request.url.query:
+        target = f"{target}?{request.url.query}"
+    return RedirectResponse(target, status_code=301)
+
+
+def _run_http_redirect_server() -> None:
+    import uvicorn
+
+    config = uvicorn.Config(http_redirect_app, host="0.0.0.0", port=HTTP_REDIRECT_PORT, log_level="warning")
+    try:
+        uvicorn.Server(config).run()
+    except Exception:
+        logger.exception("HTTP->HTTPS redirect server on port %s failed", HTTP_REDIRECT_PORT)
+
+
+@app.on_event("startup")
+def start_http_redirect_server() -> None:
+    thread = threading.Thread(target=_run_http_redirect_server, daemon=True, name="http-redirect")
+    thread.start()
 
 
 class LeadRequest(BaseModel):
