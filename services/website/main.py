@@ -1,4 +1,5 @@
 from pathlib import Path
+import asyncio
 import json
 import threading
 import time
@@ -19,32 +20,29 @@ app = FastAPI(docs_url=None, redoc_url=None)
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 
-HTTP_REDIRECT_PORT = 80
-http_redirect_app = FastAPI(docs_url=None, redoc_url=None)
+HTTP_PORT = 80
+http_server_task: "asyncio.Task | None" = None
 
 
-@http_redirect_app.api_route("/{path:path}", methods=["GET", "HEAD"])
-def redirect_to_https(request: Request, path: str):
-    target = f"https://{request.url.hostname}{request.url.path}"
-    if request.url.query:
-        target = f"{target}?{request.url.query}"
-    return RedirectResponse(target, status_code=301)
-
-
-def _run_http_redirect_server() -> None:
-    import uvicorn
-
-    config = uvicorn.Config(http_redirect_app, host="0.0.0.0", port=HTTP_REDIRECT_PORT, log_level="warning")
-    try:
-        uvicorn.Server(config).run()
-    except Exception:
-        logger.exception("HTTP->HTTPS redirect server on port %s failed", HTTP_REDIRECT_PORT)
+@app.middleware("http")
+async def redirect_http_to_https(request: Request, call_next):
+    if request.url.scheme == "http":
+        target = f"https://{request.url.hostname}{request.url.path}"
+        if request.url.query:
+            target = f"{target}?{request.url.query}"
+        return RedirectResponse(target, status_code=301)
+    return await call_next(request)
 
 
 @app.on_event("startup")
-def start_http_redirect_server() -> None:
-    thread = threading.Thread(target=_run_http_redirect_server, daemon=True, name="http-redirect")
-    thread.start()
+async def start_http_listener() -> None:
+    import uvicorn
+
+    global http_server_task
+    config = uvicorn.Config(app, host="0.0.0.0", port=HTTP_PORT, log_level="warning", lifespan="off")
+    server = uvicorn.Server(config)
+    server.install_signal_handlers = lambda: None
+    http_server_task = asyncio.create_task(server.serve())
 
 
 class LeadRequest(BaseModel):
