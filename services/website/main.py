@@ -1,10 +1,11 @@
 from pathlib import Path
+import asyncio
 import json
 import threading
 import time
 
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 import logging
 from pydantic import BaseModel
@@ -18,6 +19,30 @@ logger = logging.getLogger(__name__)
 app = FastAPI(docs_url=None, redoc_url=None)
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
+
+HTTP_PORT = 80
+http_server_task: "asyncio.Task | None" = None
+
+
+@app.middleware("http")
+async def redirect_http_to_https(request: Request, call_next):
+    if request.url.scheme == "http":
+        target = f"https://{request.url.hostname}{request.url.path}"
+        if request.url.query:
+            target = f"{target}?{request.url.query}"
+        return RedirectResponse(target, status_code=301)
+    return await call_next(request)
+
+
+@app.on_event("startup")
+async def start_http_listener() -> None:
+    import uvicorn
+
+    global http_server_task
+    config = uvicorn.Config(app, host="0.0.0.0", port=HTTP_PORT, log_level="warning", lifespan="off")
+    server = uvicorn.Server(config)
+    server.install_signal_handlers = lambda: None
+    http_server_task = asyncio.create_task(server.serve())
 
 
 class LeadRequest(BaseModel):
