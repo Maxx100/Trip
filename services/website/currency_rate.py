@@ -1,345 +1,65 @@
 import logging
-import os
-import re
-import shutil
-import tempfile
-from pathlib import Path
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.common.exceptions import SessionNotCreatedException
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+import requests
 
 logger = logging.getLogger(__name__)
+
+CBR_DAILY_URL = "https://www.cbr-xml-daily.ru/daily_json.js"
+CBR_ARCHIVE_URL = "https://www.cbr-xml-daily.ru/archive/{year}/{month:02d}/{day:02d}/daily_json.js"
+MOSCOW_TZ = timezone(timedelta(hours=3))
+REQUEST_TIMEOUT = 20
 
 
 class CurrencyRate:
     def __init__(self):
-        self.url = "https://tour-kassa.ru/%D0%BA%D1%83%D1%80%D1%81%D1%8B-%D0%B2%D0%B0%D0%BB%D1%8E%D1%82-%D1%82%D1%83%D1%80%D0%BE%D0%BF%D0%B5%D1%80%D0%B0%D1%82%D0%BE%D1%80%D0%BE%D0%B2"
-        self.base_dir = Path(__file__).resolve().parent
-        self.logs_dir = self.base_dir / "logs"
+        self.session = requests.Session()
+        self.session.headers.update({"User-Agent": "trip-kzn.ru currency widget"})
 
-    @staticmethod
-    def _resolve_binary_path(candidates: list[str]) -> str | None:
-        for candidate in candidates:
-            if not candidate:
-                continue
-            path = Path(candidate)
-            if path.is_absolute() and path.exists():
-                return str(path)
-            resolved = shutil.which(candidate)
-            if resolved:
-                return resolved
-        return None
-    
-    def _resolve_chrome_binary(self) -> str | None:
-        return self._resolve_binary_path(
-            [
-                os.getenv("CHROME_BINARY", ""),
-                "/usr/bin/chromium",
-                "/usr/bin/chromium-browser",
-                "/usr/bin/google-chrome",
-                "chromium",
-                "chromium-browser",
-                "google-chrome",
-            ]
-        )
-
-    def _resolve_chromedriver_binary(self) -> str:
-        resolved = self._resolve_binary_path(
-            [
-                os.getenv("CHROMEDRIVER_BINARY", ""),
-                "/usr/bin/chromedriver",
-                "chromedriver",
-            ]
-        )
-        if not resolved:
-            raise RuntimeError("Chromedriver binary was not found in common paths")
-        return resolved
-
-    def _build_options(self, user_data_dir: str) -> Options:
-        options = Options()
-        chrome_binary = self._resolve_chrome_binary()
-        if chrome_binary:
-            options.binary_location = chrome_binary
-
-        options.add_argument("--headless=new")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-setuid-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        options.add_argument("--disable-software-rasterizer")
-        options.add_argument("--no-first-run")
-        options.add_argument("--no-default-browser-check")
-        options.add_argument("--window-size=1920,1080")
-        # Не задаём фиксированный --remote-debugging-port: при перезапусках/падениях
-        # Chrome зависший процесс держит порт, и новые сессии падают с
-        # SessionNotCreatedException ("Chrome instance exited"). Пусть порт выбирается
-        # автоматически (chromedriver сам управляет подключением к DevTools).
-        options.add_argument(f"--user-data-dir={user_data_dir}")
-        return options
-
-    @staticmethod
-    def _parse_float(raw_value: str) -> float:
-        match = re.search(r"[-+]?\d+[.,]?\d*", raw_value.replace(" ", ""))
-        if not match:
-            raise ValueError(f"No numeric value found in: {raw_value}")
-        return float(match.group(0).replace(",", "."))
-
-    @staticmethod
-    def _normalize_operator_name(name: str) -> str:
-        lowered = name.lower().replace("ё", "е")
-        return re.sub(r"[^a-zа-я0-9]+", "", lowered)
-
-    def _should_skip_operator(self, operator_name: str) -> bool:
-        normalized = self._normalize_operator_name(operator_name)
-        blocked_fragments = (
-            "сабре",
-            "sabre",
-            "тезтур",
-            "teztour",
-            "tez",
-            "туркасса",
-            "tourkassa",
-            "пакс",
-            "paks",
-            "pax",
-        )
-        return any(fragment in normalized for fragment in blocked_fragments)
-
-    @staticmethod
-    def _clean_operator_name(raw_name: str) -> str:
-        return re.sub(r"\s*\d*\s*ИКС\s*:?\s*\d+.*$", "", raw_name).strip()
-
-    def _table_to_list(self, table) -> list[list[Any]]:
-        data = []
-        rows = table.find_all("tr")
-        for row in rows:
-            cells = [cell.get_text(strip=True) for cell in row.find_all(["th", "td"])]
-            if cells:
-                data.append(cells)
-
-        if not data:
-            return []
-
-        header = [cell.lower() for cell in data[0]]
-
-        operator_idx = 0
-        eur_idx = next((index for index, value in enumerate(header) if "eur" in value or "евр" in value), 1)
-        usd_idx = next((index for index, value in enumerate(header) if "usd" in value or "долл" in value), 4)
-
-        data = data[1:]
-
-        parsed: list[list[Any]] = []
-        for row in data:
-            required_index = max(operator_idx, eur_idx, usd_idx)
-            if len(row) <= required_index:
-                continue
-            try:
-                operator_name = self._clean_operator_name(row[operator_idx])
-                if not operator_name:
-                    continue
-                if self._should_skip_operator(operator_name):
-                    continue
-                eur_value = self._parse_float(row[eur_idx])
-                usd_value = self._parse_float(row[usd_idx])
-                parsed.append([operator_name, eur_value, usd_value])
-            except ValueError:
-                continue
-
-        return parsed
-
-    def _find_operator_table(self, soup: BeautifulSoup):
-        tables = soup.find_all("table")
-
-        def table_score(table) -> tuple[int, int]:
-            rows = table.find_all("tr")
-            header_text = " ".join(th.get_text(" ", strip=True).lower() for th in table.find_all("th"))
-            score = 0
-            if "туроператор" in header_text:
-                score += 4
-            if "usd" in header_text or "долл" in header_text:
-                score += 2
-            if "eur" in header_text or "евр" in header_text:
-                score += 2
-            return score, len(rows)
-
-        if not tables:
+    def _get_json(self, url: str) -> dict | None:
+        try:
+            response = self.session.get(url, timeout=REQUEST_TIMEOUT)
+            response.raise_for_status()
+            return response.json()
+        except Exception as error:
+            logger.warning("Failed to fetch CBR data from %s: %s", url, error)
             return None
 
-        ranked = sorted(tables, key=table_score, reverse=True)
-        return ranked[0]
+    @staticmethod
+    def _extract_pair(payload: dict) -> tuple[float, float]:
+        valute = payload["Valute"]
+        eur = float(valute["EUR"]["Value"])
+        usd = float(valute["USD"]["Value"])
+        return round(eur, 2), round(usd, 2)
 
-    def _extract_cbr_rates_from_tables(self, soup: BeautifulSoup) -> tuple[float | None, float | None, float | None, float | None]:
-        usd_today = usd_tomorrow = eur_today = eur_tomorrow = None
-
-        for table in soup.find_all("table"):
-            table_text = table.get_text(" ", strip=True).lower()
-            if "цб" not in table_text and "прогноз" not in table_text:
-                continue
-
-            for row in table.find_all("tr"):
-                row_text = row.get_text(" ", strip=True).lower()
-                if "завтра" not in row_text:
-                    continue
-                numbers = [self._parse_float(match) for match in re.findall(r"\d+[.,]\d+", row_text)]
-                if len(numbers) < 2:
-                    continue
-                if "usd" in row_text or "доллар" in row_text:
-                    usd_today, usd_tomorrow = numbers[0], numbers[1]
-                if "eur" in row_text or "евро" in row_text:
-                    eur_today, eur_tomorrow = numbers[0], numbers[1]
-
-            if all(value is not None for value in [usd_today, usd_tomorrow, eur_today, eur_tomorrow]):
-                return usd_today, usd_tomorrow, eur_today, eur_tomorrow
-
-        return usd_today, usd_tomorrow, eur_today, eur_tomorrow
-
-    def _extract_cbr_rates_from_widget(self, soup: BeautifulSoup) -> tuple[float | None, float | None, float | None, float | None]:
-        key_map = {
-            "eur-cbr-today": None,
-            "eur-tomorrow": None,
-            "usd-cbr-today": None,
-            "usd-tomorrow": None,
-        }
-
-        for key in key_map:
-            node = soup.select_one(f".tmw-item[data-key='{key}'] .tmw-value")
-            if node:
-                try:
-                    key_map[key] = self._parse_float(node.get_text(" ", strip=True))
-                except ValueError:
-                    key_map[key] = None
-
-        return (
-            key_map["usd-cbr-today"],
-            key_map["usd-tomorrow"],
-            key_map["eur-cbr-today"],
-            key_map["eur-tomorrow"],
+    def _fetch_for_date(self, day) -> tuple[float, float] | None:
+        payload = self._get_json(
+            CBR_ARCHIVE_URL.format(year=day.year, month=day.month, day=day.day)
         )
-
-    def _extract_cbr_rates_from_text(self, soup: BeautifulSoup) -> tuple[float | None, float | None, float | None, float | None]:
-        full_text = soup.get_text(" ", strip=True)
-        normalized = full_text.replace("\xa0", " ")
-        lower = normalized.lower()
-
-        anchor_index = -1
-        for keyword in ("прогноз", "цб", "центробанк", "центральный банк"):
-            anchor_index = lower.find(keyword)
-            if anchor_index != -1:
-                break
-
-        segment = normalized[max(0, anchor_index - 600): anchor_index + 2400] if anchor_index != -1 else normalized
-
-        def extract_pair(code_pattern: str) -> tuple[float | None, float | None]:
-            pattern = rf"{code_pattern}[^\d]{{0,80}}(\d+[.,]\d+)[^\d]{{0,80}}(\d+[.,]\d+)"
-            match = re.search(pattern, segment, flags=re.IGNORECASE)
-            if not match:
-                return None, None
-            return self._parse_float(match.group(1)), self._parse_float(match.group(2))
-
-        usd_today, usd_tomorrow = extract_pair(r"(?:usd|доллар)")
-        eur_today, eur_tomorrow = extract_pair(r"(?:eur|евро)")
-        return usd_today, usd_tomorrow, eur_today, eur_tomorrow
-
-    def _extract_cbr_change_ratios(self, soup: BeautifulSoup) -> tuple[float, float]:
-        usd_today, usd_tomorrow, eur_today, eur_tomorrow = self._extract_cbr_rates_from_widget(soup)
-
-        if None in (usd_today, usd_tomorrow, eur_today, eur_tomorrow):
-            table_values = self._extract_cbr_rates_from_tables(soup)
-            usd_today = usd_today if usd_today is not None else table_values[0]
-            usd_tomorrow = usd_tomorrow if usd_tomorrow is not None else table_values[1]
-            eur_today = eur_today if eur_today is not None else table_values[2]
-            eur_tomorrow = eur_tomorrow if eur_tomorrow is not None else table_values[3]
-
-        if None in (usd_today, usd_tomorrow, eur_today, eur_tomorrow):
-            text_values = self._extract_cbr_rates_from_text(soup)
-            usd_today = usd_today if usd_today is not None else text_values[0]
-            usd_tomorrow = usd_tomorrow if usd_tomorrow is not None else text_values[1]
-            eur_today = eur_today if eur_today is not None else text_values[2]
-            eur_tomorrow = eur_tomorrow if eur_tomorrow is not None else text_values[3]
-
-        usd_ratio = 1.0
-        eur_ratio = 1.0
-
-        if usd_today and usd_tomorrow and usd_today > 0:
-            usd_ratio = usd_tomorrow / usd_today
-        else:
-            logger.warning("Could not determine USD CBR forecast ratio; fallback to 1.0")
-
-        if eur_today and eur_tomorrow and eur_today > 0:
-            eur_ratio = eur_tomorrow / eur_today
-        else:
-            logger.warning("Could not determine EUR CBR forecast ratio; fallback to 1.0")
-
-        return usd_ratio, eur_ratio
+        if not payload:
+            return None
+        try:
+            return self._extract_pair(payload)
+        except (KeyError, TypeError, ValueError):
+            return None
 
     def fetch(self) -> dict[str, list[list[Any]]]:
-        self.logs_dir.mkdir(parents=True, exist_ok=True)
-        driver_log_path = self.logs_dir / "chromedriver.log"
-        service = Service(
-            executable_path=self._resolve_chromedriver_binary(),
-            service_args=["--verbose", f"--log-path={driver_log_path}"],
-        )
+        payload = self._get_json(CBR_DAILY_URL)
+        if not payload:
+            raise RuntimeError("Could not fetch CBR daily rates")
 
-        with tempfile.TemporaryDirectory(prefix="trip-chrome-") as profile_dir:
-            driver = None
-            try:
-                driver = webdriver.Chrome(service=service, options=self._build_options(profile_dir))
-                driver.get(self.url)
-                WebDriverWait(driver, 15).until(EC.presence_of_element_located((By.CSS_SELECTOR, "table")))
+        eur_today, usd_today = self._extract_pair(payload)
+        today = [["ЦБ РФ", eur_today, usd_today]]
 
-                soup = BeautifulSoup(driver.page_source, "html.parser")
-                operator_table = self._find_operator_table(soup)
-                if operator_table is None:
-                    raise ValueError("Could not find operator rates table on source page")
+        tomorrow_date = datetime.now(MOSCOW_TZ).date() + timedelta(days=1)
+        tomorrow_pair = self._fetch_for_date(tomorrow_date)
+        if tomorrow_pair:
+            tomorrow = [["ЦБ РФ", tomorrow_pair[0], tomorrow_pair[1]]]
+        else:
+            tomorrow = today
 
-                today = self._table_to_list(operator_table)
-                if not today:
-                    raise ValueError("Operator rates table was found but no rows could be parsed")
-
-                usd_ratio, eur_ratio = self._extract_cbr_change_ratios(soup)
-                tomorrow = [
-                    [
-                        operator_name,
-                        round(eur_value * eur_ratio, 2),
-                        round(usd_value * usd_ratio, 2),
-                    ]
-                    for operator_name, eur_value, usd_value in today
-                ]
-
-                return {
-                    "today": today,
-                    "tomorrow": tomorrow,
-                }
-            except SessionNotCreatedException:
-                logger.exception(
-                    "Failed to start Chrome session. chromedriver log: %s, chrome binary: %s, chromedriver binary: %s",
-                    driver_log_path,
-                    self._resolve_chrome_binary(),
-                    self._resolve_chromedriver_binary(),
-                )
-                raise
-            finally:
-                if driver is not None:
-                    driver.quit()
-
-    def update(self) -> tuple[list[list[Any]], list[list[Any]]]:
-        data = self.fetch()
-        return data["today"], data["tomorrow"]
-
-    def __str__(self):
-        try:
-            data = self.fetch()
-            return f"Today's Rates: {data['today']}\nTomorrow's Rates: {data['tomorrow']}"
-        except Exception as error:
-            logger.error(f"Error fetching currency rates: {error}")
-            return "Currency rates are unavailable"
+        return {"today": today, "tomorrow": tomorrow}
 
 
 if __name__ == "__main__":
