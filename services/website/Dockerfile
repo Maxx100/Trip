@@ -2,6 +2,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	chromium \
+	chromium-driver \
+	ca-certificates \
+	fonts-liberation \
+	&& rm -rf /var/lib/apt/lists/*
+
 COPY services/website/requirements.txt ./requirements.txt
 COPY core/logger/requirements.txt ./core/logger/requirements.txt
 

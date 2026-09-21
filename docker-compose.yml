@@ -4,6 +4,9 @@ services:
       context: .
       dockerfile: ./services/website/Dockerfile
     container_name: trip_website
+    # Запускаем процесс через init (tini): он реапит зомби-процессы Chromium,
+    # которые иначе накапливаются и держат ресурсы/порты, ломая запуск новых сессий.
+    init: true
     environment:
       - SMTP_HOST=smtp.yandex.ru
       - SMTP_PORT=465
