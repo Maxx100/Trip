@@ -1372,58 +1372,365 @@ h1 span {
   font-size: clamp(1.75rem, 3.2vw, 2.45rem);
 }
 
-.currency-meta {
-  color: #6f4e2f;
-  font-weight: 600;
+.currency-page .tm-rates-module {
+  font-family: "Manrope", sans-serif;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(183, 119, 54, 0.3);
+  box-shadow: 0 16px 40px rgba(142, 83, 24, 0.1);
 }
 
-.currency-error {
-  border: 1px solid rgba(186, 70, 29, 0.45);
-  background: rgba(255, 235, 226, 0.9);
-  color: #8a2a00;
-  border-radius: 12px;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
+.currency-page .tm-rates-module * {
+  font-family: "Manrope", sans-serif;
 }
 
-.currency-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+.currency-page .tm-rates-module .tm-rates-head__title {
+  color: #6f431a;
 }
 
-.currency-card h3 {
-  margin-bottom: 0.8rem;
+.currency-page .tm-rates-module .tm-rates-head__updated,
+.currency-page .tm-rates-module .tm-rates-count,
+.currency-page .tm-rates-module .tm-rate-card__title,
+.currency-page .tm-rates-module .tm-rates-iks-delta,
+.currency-page .tm-rates-module .tm-forecast-card__delta-icon,
+.currency-page .tm-rates-module .tm-forecast-card__delta-text,
+.currency-page .tm-rates-module .tm-forecast-card__eyebrow,
+.currency-page .tm-rates-module .tm-forecast-card__market-time,
+.currency-page .tm-rates-module .tm-forecast-card__market-label,
+.currency-page .tm-rates-module .tm-forecast-card.is-neutral .tm-forecast-card__delta-icon,
+.currency-page .tm-rates-module .tm-forecast-card.is-neutral .tm-forecast-card__delta-text,
+.currency-page .tm-rates-module .tm-rates-forecast-widget__text,
+.currency-page .tm-rates-module .tm-rates-archive-empty,
+.currency-page .tm-rates-module .tm-rate-card__delta.is-wait,
+.currency-page .tm-rates-module .tm-widget-ver {
+  color: var(--muted);
 }
 
-.currency-table-wrap {
-  overflow-x: auto;
+.currency-page .tm-rates-module .tm-widget-ver__item::before {
+  color: #ffd6a3;
 }
 
-.currency-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 420px;
+.currency-page .tm-rates-module .tm-rate-card__value,
+.currency-page .tm-rates-module .tm-rates-iks-value,
+.currency-page .tm-rates-module .tm-rates-archive-field label,
+.currency-page .tm-rates-module .tm-rates-forecast-widget__title,
+.currency-page .tm-rates-module .tm-forecast-card__forecast,
+.currency-page .tm-rates-module .tm-forecast-card__market-value,
+.currency-page .tm-rates-module .tm-rates-count__item b {
+  color: var(--text);
 }
 
-.currency-table th,
-.currency-table td {
-  padding: 0.6rem 0.7rem;
-  border-bottom: 1px solid rgba(183, 119, 54, 0.3);
-  text-align: left;
-  white-space: nowrap;
+.currency-page .tm-rates-module .tm-rates-head__tabs {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 8px 24px rgba(142, 83, 24, 0.1);
 }
 
-.currency-table th {
-  color: #7a4b1e;
-  font-size: 0.88rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.currency-table td {
+.currency-page .tm-rates-module .tm-rates-head__tab {
   color: #5d3f24;
-  font-weight: 600;
+  border: 1px solid rgba(183, 119, 54, 0.28);
+  background: linear-gradient(180deg, #fffaf2 0, #f9efe0 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-head__tab:hover {
+  box-shadow: 0 6px 18px rgba(255, 138, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.currency-page .tm-rates-module .tm-rates-head__tab.is-active {
+  color: #5a3400 !important;
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.35) 0, rgba(255, 255, 255, 0) 26%),
+    linear-gradient(135deg, #ff8a2a 0, #f7a24a 48%, #ffd06c 100%) !important;
+  box-shadow: 0 14px 26px rgba(255, 138, 42, 0.3) !important;
+}
+
+.currency-page .tm-rates-module .tm-rates-head__tab.is-active span,
+.currency-page .tm-rates-module .tm-rates-head__tab.is-active strong {
+  color: #5a3400 !important;
+  opacity: 1;
+}
+
+.currency-page .tm-rates-module .tm-rate-card,
+.currency-page .tm-rates-module .tm-rates-archive-empty,
+.currency-page .tm-rates-module .tm-rates-forecast-widget {
+  background: #fff6e8;
+  border-color: rgba(255, 138, 42, 0.25);
+}
+
+.currency-page .tm-rates-module .tm-rates-table thead th {
+  color: #7a4b1e;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0, rgba(255, 243, 226, 0.98) 100%);
+  border-top: 1px solid rgba(183, 119, 54, 0.3);
+  border-bottom: 1px solid rgba(183, 119, 54, 0.3);
+}
+
+.currency-page .tm-rates-module .tm-rates-table thead th:first-child {
+  border-left: 1px solid rgba(183, 119, 54, 0.3);
+}
+
+.currency-page .tm-rates-module .tm-rates-table thead th:last-child {
+  border-right: 1px solid rgba(183, 119, 54, 0.3);
+}
+
+.currency-page .tm-rates-module .tm-rates-table thead th:not(:first-child):not(:last-child) {
+  border-left-color: rgba(183, 119, 54, 0.2);
+}
+
+.currency-page .tm-rates-module .tm-rates-table thead th::after,
+.currency-page .tm-rates-module .tm-forecast-card.is-neutral::before {
+  background: linear-gradient(90deg, #ff8a2a 0, #ffd06c 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-table tbody td {
+  color: #5d3f24;
+  border-bottom-color: rgba(183, 119, 54, 0.18);
+}
+
+.currency-page .tm-rates-module .tm-rates-table tbody tr:hover td {
+  background: rgba(255, 138, 42, 0.06);
+}
+
+.currency-page .tm-rates-module .tm-rates-table__base td {
+  background: linear-gradient(90deg, #fff5e6 0, #ffeeda 100%) !important;
+}
+
+.currency-page .tm-rates-module .tm-rates-table__target-date td {
+  background: linear-gradient(90deg, rgba(255, 138, 42, 0.14), rgba(255, 138, 42, 0.05)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 -1px 0 rgba(255, 138, 42, 0.14);
+}
+
+.currency-page .tm-rates-module .tm-rates-table__target-date td:first-child,
+.currency-page .tm-rates-module .tm-rates-table__base td:first-child {
+  border-left: 3px solid #ff8a2a;
+}
+
+.currency-page .tm-rates-module .tm-rates-operator__main a,
+.currency-page .tm-rates-module .tm-rates-operator__main span:last-child,
+.currency-page .tm-rates-module .tm-col-percent,
+.currency-page .tm-rates-module .tm-col-rate,
+.currency-page .tm-rates-module .tm-percent-value,
+.currency-page .tm-rates-module .tm-rate-value,
+.currency-page .tm-rates-module .tm-rates-settings-btn {
+  color: #df6b0d;
+}
+
+.currency-page .tm-rates-module .tm-rates-operator__main a:hover {
+  color: var(--primary);
+}
+
+.currency-page .tm-rates-module .tm-percent-value,
+.currency-page .tm-rates-module .tm-rate-value {
+  font-family: "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 6px rgba(255, 138, 42, 0.1);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-btn {
+  border-color: rgba(255, 138, 42, 0.35);
+  box-shadow: 0 8px 22px rgba(255, 138, 42, 0.14);
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-pill,
+.currency-page .tm-rates-module .tm-rates-iks-note,
+.currency-page .tm-rates-module .tm-rates-badge,
+.currency-page .tm-rates-module .tm-rates-rank__num {
+  background: linear-gradient(180deg, #fff3e2 0, #ffe6c7 100%);
+  border: 1px solid #ffd6a3;
+  color: #a25a12;
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-label {
+  color: #a25a12;
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-pill,
+.currency-page .tm-rates-module .tm-rates-iks-pill * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+.currency-page .tm-rates-module .tm-rates-badge {
+  box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.45), 0 6px 14px rgba(142, 83, 24, 0.14);
+}
+
+.currency-page .tm-rates-module .tm-rates-badge--1,
+.currency-page .tm-rates-module .tm-rates-badge--2,
+.currency-page .tm-rates-module .tm-rates-badge--3 {
+  background: linear-gradient(180deg, #ffe2bd 0, #ffd08a 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-value::before,
+.currency-page .tm-rates-module .tm-rates-iks-delta::before {
+  background: #ffd6a3;
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-note__tag {
+  border-right: 1px solid #ffd6a3;
+  color: #a25a12;
+}
+
+.currency-page .tm-rates-module .tm-rates-iks-delta.is-flat,
+.currency-page .tm-rates-module .tm-rates-count__item.is-hidden b {
+  color: #8a6a4d;
+}
+
+.currency-page .tm-rates-module .tm-rates-archive-field input[type="date"],
+.currency-page .tm-rates-module .tm-rates-archive-field select {
+  color: var(--text);
+  border: 1px solid rgba(255, 138, 42, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), 0 4px 14px rgba(142, 83, 24, 0.06);
+}
+
+.currency-page .tm-rates-module .tm-rates-archive-field input[type="date"]:focus,
+.currency-page .tm-rates-module .tm-rates-archive-field select:focus {
+  border-color: rgba(255, 138, 42, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 138, 42, 0.15), 0 6px 18px rgba(255, 138, 42, 0.12);
+}
+
+.currency-page .tm-rates-module .tm-rates-archive-field button {
+  color: #5a3400;
+  background: linear-gradient(135deg, var(--primary) 0%, #ffd06c 100%);
+  box-shadow: 0 8px 20px rgba(255, 164, 76, 0.35);
+}
+
+.currency-page .tm-rates-module .tm-rates-archive-field button:hover {
+  box-shadow: 0 12px 26px rgba(255, 164, 76, 0.42);
+}
+
+.currency-page .tm-rates-module .tm-rates-forecast-widget__placeholder {
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(255, 138, 42, 0.1), rgba(142, 83, 24, 0.06));
+}
+
+.currency-page .tm-rates-module .tm-forecast-card,
+.currency-page .tm-rates-module .tm-forecast-card__delta-box {
+  background: linear-gradient(180deg, #fff 0, #fff6e8 100%);
+  border-color: rgba(255, 138, 42, 0.18);
+}
+
+.currency-page .tm-rates-module .tm-forecast-card {
+  box-shadow: 0 10px 28px rgba(142, 83, 24, 0.08);
+}
+
+.currency-page .tm-rates-module .tm-forecast-card__flag {
+  background: linear-gradient(180deg, #fff6e8 0, #ffeeda 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 10px 22px rgba(142, 83, 24, 0.1);
+}
+
+.currency-page .tm-exchange-widget__error,
+.currency-page .tm-exchange-widget__loading {
+  color: var(--muted);
+  background: #fff6e8;
+  border-color: rgba(255, 138, 42, 0.3);
+}
+
+.currency-page .tm-rates-module .tm-exchange-widget__branding a {
+  color: var(--muted);
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.currency-page .tm-rates-module .tm-exchange-widget__branding a:hover {
+  color: #a04c0a;
+}
+
+.currency-page .tm-rates-module .tm-col-diff.is-up,
+.currency-page .tm-rates-module .tm-diff-value.is-up,
+.currency-page .tm-rates-module .tm-rates-iks-delta.is-up,
+.currency-page .tm-rates-module .tm-forecast-card.is-up .tm-forecast-card__delta-icon,
+.currency-page .tm-rates-module .tm-forecast-card.is-up .tm-forecast-card__delta-text {
+  color: #16a34a;
+}
+
+.currency-page .tm-rates-module .tm-col-diff.is-down,
+.currency-page .tm-rates-module .tm-diff-value.is-down,
+.currency-page .tm-rates-module .tm-rates-iks-delta.is-down,
+.currency-page .tm-rates-module .tm-forecast-card.is-down .tm-forecast-card__delta-icon,
+.currency-page .tm-rates-module .tm-forecast-card.is-down .tm-forecast-card__delta-text {
+  color: #dc2626;
+}
+
+.currency-page .tm-rates-module .tm-rate-value > .tm-ri-t,
+.currency-page .tm-rates-module .tm-rate-value > .tm-ri,
+.currency-page .tm-rates-module .tm-percent-value > .tm-ri-t,
+.currency-page .tm-rates-module .tm-percent-value > .tm-ri {
+  filter: hue-rotate(180deg) saturate(1.4) brightness(0.85);
+}
+
+.currency-page .tm-rates-module .tm-diff-value > .tm-ri-t,
+.currency-page .tm-rates-module .tm-diff-value > .tm-ri,
+.currency-page .tm-rates-module .tm-col-diff > .tm-ri-t,
+.currency-page .tm-rates-module .tm-col-diff > .tm-ri {
+  filter: grayscale(1) brightness(0.35);
+}
+
+.currency-page .tm-rates-module .is-down .tm-ri-t,
+.currency-page .tm-rates-module .is-down .tm-ri {
+  filter: hue-rotate(157deg) saturate(1.3) brightness(0.9);
+}
+
+.currency-page .tm-rates-module .is-up .tm-ri-t,
+.currency-page .tm-rates-module .is-up .tm-ri {
+  filter: hue-rotate(-83deg) saturate(1.3) brightness(0.8);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-primary {
+  color: #5a3400;
+  background: linear-gradient(135deg, var(--primary) 0%, #ffd06c 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-secondary,
+.currency-page .tm-rates-module .tm-rates-settings-item em {
+  color: #a25a12;
+  background: linear-gradient(180deg, #fff3e2 0, #ffe6c7 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-item:hover {
+  border-color: rgba(255, 138, 42, 0.35);
+  background: #fff6e8;
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-item.is-required {
+  border-color: rgba(255, 138, 42, 0.35);
+  background: linear-gradient(135deg, #fff3e2 0, #fff 100%);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-search:focus {
+  border-color: rgba(255, 138, 42, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 138, 42, 0.15);
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-item.is-required::before {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+}
+
+.currency-page .tm-rates-module .tm-rates-settings-item:has(input[type="checkbox"]:checked)::before {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+}
+
+@media (max-width: 768px) {
+  .currency-page .tm-rates-module .tm-rates-table tbody tr {
+    border-color: rgba(183, 119, 54, 0.3) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 4px 12px rgba(142, 83, 24, 0.06) !important;
+  }
+
+  .currency-page .tm-rates-module .tm-rates-table tbody td:first-child {
+    background: linear-gradient(180deg, #fff6e8 0, #ffeeda 100%) !important;
+    border-bottom-color: rgba(183, 119, 54, 0.3) !important;
+  }
+
+  .currency-page .tm-rates-module .tm-rates-table tbody td:not(:first-child) {
+    border-bottom-color: rgba(183, 119, 54, 0.12) !important;
+  }
+
+  .currency-page .tm-rates-module .tm-rates-table tbody td:not(:first-child)::before {
+    color: var(--muted) !important;
+  }
+
+  .currency-page .tm-rates-module .tm-rates-table tbody tr.is-collapsible td:first-child::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23df6b0d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  }
 }
 
 .process-page {
@@ -1601,10 +1908,6 @@ h1 span {
 
   .reviews-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .currency-grid {
-    grid-template-columns: 1fr;
   }
 }
 
